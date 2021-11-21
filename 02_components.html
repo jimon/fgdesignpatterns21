@@ -6,7 +6,7 @@
   <meta http-equiv="Content-Style-Type" content="text/css" />
   <meta name="generator" content="pandoc" />
   <meta name="author" content="Dmytro Ivanov" />
-  <title>Introduction to Software Design Patterns</title>
+  <title>Composition, Composite, Components</title>
   <style type="text/css">
     code{white-space: pre-wrap;}
     span.smallcaps{font-variant: small-caps;}
@@ -14,6 +14,69 @@
     div.column{display: inline-block; vertical-align: top; width: 50%;}
     div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
     ul.task-list{list-style: none;}
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
     .display.math{display: block; text-align: center; margin: 0.5rem auto;}
   </style>
   <link href="data:text/css; charset=utf-8;charset=utf-8,%0Abody%0A%7B%0Amargin%3A%200%200%200%200%3B%0Apadding%3A%200%200%200%200%3B%0Awidth%3A%20100%25%3B%0Aheight%3A%20100%25%3B%0Acolor%3A%20black%3B%0Abackground%2Dcolor%3A%20white%3B%0Afont%2Dfamily%3A%20%22Gill%20Sans%20MT%22%2C%20%22Gill%20Sans%22%2C%20GillSans%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014pt%3B%0A%7D%0Adiv%2Etoolbar%20%7B%0Aposition%3A%20fixed%3B%20z%2Dindex%3A%20200%3B%0Atop%3A%20auto%3B%20bottom%3A%200%3B%20left%3A%200%3B%20right%3A%200%3B%0Aheight%3A%201%2E2em%3B%20text%2Dalign%3A%20right%3B%0Apadding%2Dleft%3A%201em%3B%0Apadding%2Dright%3A%201em%3B%20font%2Dsize%3A%2060%25%3B%0Acolor%3A%20red%3B%0Abackground%2Dcolor%3A%20rgb%28240%2C240%2C240%29%3B%0Aborder%2Dtop%3A%20solid%201px%20rgb%28180%2C180%2C180%29%3B%0A%7D%0Adiv%2Etoolbar%20span%2Ecopyright%20%7B%0Acolor%3A%20black%3B%0Amargin%2Dleft%3A%200%2E5em%3B%0A%7D%0Adiv%2Einitial%5Fprompt%20%7B%0Aposition%3A%20absolute%3B%0Az%2Dindex%3A%201000%3B%0Abottom%3A%201%2E2em%3B%0Awidth%3A%20100%25%3B%0Abackground%2Dcolor%3A%20rgb%28200%2C200%2C200%29%3B%0Aopacity%3A%200%2E35%3B%0Abackground%2Dcolor%3A%20rgba%28200%2C200%2C200%2C%200%2E35%29%3B%0Acursor%3A%20pointer%3B%0A%7D%0Adiv%2Einitial%5Fprompt%20p%2Ehelp%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Adiv%2Einitial%5Fprompt%20p%2Eclose%20%7B%0Atext%2Dalign%3A%20right%3B%0Afont%2Dstyle%3A%20italic%3B%0A%7D%0Adiv%2Eslidy%5Ftoc%20%7B%0Aposition%3A%20absolute%3B%0Az%2Dindex%3A%20300%3B%0Awidth%3A%2060%25%3B%0Amax%2Dwidth%3A%2030em%3B%0Aheight%3A%2030em%3B%0Aoverflow%3A%20auto%3B%0Atop%3A%20auto%3B%0Aright%3A%20auto%3B%0Aleft%3A%204em%3B%0Abottom%3A%204em%3B%0Apadding%3A%201em%3B%0Abackground%3A%20rgb%28240%2C240%2C240%29%3B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%2Dwidth%3A%202px%3B%0Afont%2Dsize%3A%2060%25%3B%0A%7D%0Adiv%2Eslidy%5Ftoc%20%2Etoc%5Fheading%20%7B%0Atext%2Dalign%3A%20center%3B%0Awidth%3A%20100%25%3B%0Amargin%3A%200%3B%0Amargin%2Dbottom%3A%201em%3B%0Aborder%2Dbottom%2Dstyle%3A%20solid%3B%0Aborder%2Dbottom%2Dcolor%3A%20rgb%28180%2C180%2C180%29%3B%0Aborder%2Dbottom%2Dwidth%3A%201px%3B%0A%7D%0Adiv%2Eslide%20%7B%0Az%2Dindex%3A%2020%3B%0Amargin%3A%200%200%200%200%3B%0Apadding%2Dtop%3A%200%3B%0Apadding%2Dbottom%3A%200%3B%0Apadding%2Dleft%3A%2020px%3B%0Apadding%2Dright%3A%2020px%3B%0Aborder%2Dwidth%3A%200%3B%0Aclear%3A%20both%3B%0Atop%3A%200%3B%0Abottom%3A%200%3B%0Aleft%3A%200%3B%0Aright%3A%200%3B%0Aline%2Dheight%3A%20120%25%3B%0Abackground%2Dcolor%3A%20transparent%3B%0A%7D%0Adiv%2Ebackground%20%7B%0Adisplay%3A%20none%3B%0A%7D%0Adiv%2Ehandout%20%7B%0Amargin%2Dleft%3A%2020px%3B%0Amargin%2Dright%3A%2020px%3B%0A%7D%0Adiv%2Eslide%2Etitlepage%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Adiv%2Eslide%2Etitlepage%20h1%20%7B%0Apadding%2Dtop%3A%2010%25%3B%0Amargin%2Dright%3A%200%3B%0A%7D%0Adiv%2Eslide%20h1%20%7B%0Apadding%2Dleft%3A%200%3B%0Apadding%2Dright%3A%2020pt%3B%0Apadding%2Dtop%3A%204pt%3B%0Apadding%2Dbottom%3A%204pt%3B%0Amargin%2Dtop%3A%200%3B%0Amargin%2Dleft%3A%200%3B%0Amargin%2Dright%3A%2060pt%3B%0Amargin%2Dbottom%3A%200%2E5em%3B%0Adisplay%3A%20block%3B%20font%2Dsize%3A%20160%25%3B%0Aline%2Dheight%3A%201%2E2em%3B%0Abackground%3A%20transparent%3B%0A%7D%0A%40media%20screen%20and%20%28max%2Ddevice%2Dwidth%3A%201024px%29%0A%7B%0Adiv%2Eslide%20%7B%20font%2Dsize%3A%20100%25%3B%20%7D%0A%7D%0A%40media%20screen%20and%20%28max%2Ddevice%2Dwidth%3A%20800px%29%0A%7B%0Adiv%2Eslide%20%7B%20font%2Dsize%3A%20200%25%3B%20%7D%0Adiv%2Eslidy%5Ftoc%20%7B%0Atop%3A%201em%3B%0Aleft%3A%201em%3B%0Aright%3A%20auto%3B%0Awidth%3A%2080%25%3B%0Afont%2Dsize%3A%20180%25%3B%0A%7D%0A%7D%0Adiv%2Etoc%2Dheading%20%7B%0Awidth%3A%20100%25%3B%0Aborder%2Dbottom%3A%20solid%201px%20rgb%28180%2C180%2C180%29%3B%0Amargin%2Dbottom%3A%201em%3B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Aimage%2Drendering%3A%20optimize%2Dquality%3B%0A%7D%0Apre%20%7B%0Afont%2Dsize%3A%2080%25%3B%0Afont%2Dweight%3A%20bold%3B%0Aline%2Dheight%3A%20120%25%3B%0Apadding%2Dtop%3A%200%2E2em%3B%0Apadding%2Dbottom%3A%200%2E2em%3B%0Apadding%2Dleft%3A%201em%3B%0Apadding%2Dright%3A%201em%3B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%2Dleft%2Dwidth%3A%201em%3B%0Aborder%2Dtop%2Dwidth%3A%20thin%3B%0Aborder%2Dright%2Dwidth%3A%20thin%3B%0Aborder%2Dbottom%2Dwidth%3A%20thin%3B%0Aborder%2Dcolor%3A%20%2395ABD0%3B%0Acolor%3A%20%2300428C%3B%0Abackground%2Dcolor%3A%20%23E4E5E7%3B%0A%7D%0Ali%20pre%20%7B%20margin%2Dleft%3A%200%3B%20%7D%0Ablockquote%20%7B%20font%2Dstyle%3A%20italic%20%7D%0Aimg%20%7B%20background%2Dcolor%3A%20transparent%20%7D%0Ap%2Ecopyright%20%7B%20font%2Dsize%3A%20smaller%20%7D%0A%2Ecenter%20%7B%20text%2Dalign%3A%20center%20%7D%0A%2Efootnote%20%7B%20font%2Dsize%3A%20smaller%3B%20margin%2Dleft%3A%202em%3B%20%7D%0Aa%20img%20%7B%20border%2Dwidth%3A%200%3B%20border%2Dstyle%3A%20none%20%7D%0Aa%3Avisited%20%7B%20color%3A%20navy%20%7D%0Aa%3Alink%20%7B%20color%3A%20navy%20%7D%0Aa%3Ahover%20%7B%20color%3A%20red%3B%20text%2Ddecoration%3A%20underline%20%7D%0Aa%3Aactive%20%7B%20color%3A%20red%3B%20text%2Ddecoration%3A%20underline%20%7D%0Aa%20%7Btext%2Ddecoration%3A%20none%7D%0A%2Etoolbar%20a%3Alink%20%7Bcolor%3A%20blue%7D%0A%2Etoolbar%20a%3Avisited%20%7Bcolor%3A%20blue%7D%0A%2Etoolbar%20a%3Aactive%20%7Bcolor%3A%20red%7D%0A%2Etoolbar%20a%3Ahover%20%7Bcolor%3A%20red%7D%0Aul%20%7B%20list%2Dstyle%2Dtype%3A%20square%3B%20%7D%0Aul%20ul%20%7B%20list%2Dstyle%2Dtype%3A%20disc%3B%20%7D%0Aul%20ul%20ul%20%7B%20list%2Dstyle%2Dtype%3A%20circle%3B%20%7D%0Aul%20ul%20ul%20ul%20%7B%20list%2Dstyle%2Dtype%3A%20disc%3B%20%7D%0Ali%20%7B%20margin%2Dleft%3A%200%2E5em%3B%20margin%2Dtop%3A%200%2E5em%3B%20%7D%0Ali%20li%20%7B%20font%2Dsize%3A%2085%25%3B%20font%2Dstyle%3A%20italic%20%7D%0Ali%20li%20li%20%7B%20font%2Dsize%3A%2085%25%3B%20font%2Dstyle%3A%20normal%20%7D%0Adiv%20dt%0A%7B%0Amargin%2Dleft%3A%200%3B%0Amargin%2Dtop%3A%201em%3B%0Amargin%2Dbottom%3A%200%2E5em%3B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Adiv%20dd%0A%7B%0Amargin%2Dleft%3A%202em%3B%0Amargin%2Dbottom%3A%200%2E5em%3B%0A%7D%0Ap%2Cpre%2Cul%2Col%2Cblockquote%2Ch2%2Ch3%2Ch4%2Ch5%2Ch6%2Cdl%2Ctable%20%7B%0Amargin%2Dleft%3A%201em%3B%0Amargin%2Dright%3A%201em%3B%0A%7D%0Ap%2Esubhead%20%7B%20font%2Dweight%3A%20bold%3B%20margin%2Dtop%3A%202em%3B%20%7D%0A%2Esmaller%20%7B%20font%2Dsize%3A%20smaller%20%7D%0A%2Ebigger%20%7B%20font%2Dsize%3A%20130%25%20%7D%0Atd%2Cth%20%7B%20padding%3A%200%2E2em%20%7D%0Aul%20%7B%0Amargin%3A%200%2E5em%201%2E5em%200%2E5em%201%2E5em%3B%0Apadding%3A%200%3B%0A%7D%0Aol%20%7B%0Amargin%3A%200%2E5em%201%2E5em%200%2E5em%201%2E5em%3B%0Apadding%3A%200%3B%0A%7D%0Aul%20%7B%20list%2Dstyle%2Dtype%3A%20square%3B%20%7D%0Aul%20ul%20%7B%20list%2Dstyle%2Dtype%3A%20disc%3B%20%7D%0Aul%20ul%20ul%20%7B%20list%2Dstyle%2Dtype%3A%20circle%3B%20%7D%0Aul%20ul%20ul%20ul%20%7B%20list%2Dstyle%2Dtype%3A%20disc%3B%20%7D%0Aul%20li%20%7B%20list%2Dstyle%3A%20square%3B%0Amargin%3A%200%2E1em%200em%200%2E6em%200%3B%0Apadding%3A%200%200%200%200%3B%0Aline%2Dheight%3A%20140%25%3B%0A%7D%0Aol%20li%20%7B%20margin%3A%200%2E1em%200em%200%2E6em%201%2E5em%3B%0Apadding%3A%200%200%200%200px%3B%0Aline%2Dheight%3A%20140%25%3B%0Alist%2Dstyle%2Dtype%3A%20decimal%3B%0A%7D%0Ali%20ul%20li%20%7B%20font%2Dsize%3A%2085%25%3B%20font%2Dstyle%3A%20italic%3B%0Alist%2Dstyle%2Dtype%3A%20disc%3B%0Abackground%3A%20transparent%3B%0Apadding%3A%200%200%200%200%3B%0A%7D%0Ali%20li%20ul%20li%20%7B%20font%2Dsize%3A%2085%25%3B%20font%2Dstyle%3A%20normal%3B%0Alist%2Dstyle%2Dtype%3A%20circle%3B%0Abackground%3A%20transparent%3B%0Apadding%3A%200%200%200%200%3B%0A%7D%0Ali%20li%20li%20ul%20li%20%7B%0Alist%2Dstyle%2Dtype%3A%20disc%3B%0Abackground%3A%20transparent%3B%0Apadding%3A%200%200%200%200%3B%0A%7D%0Ali%20ol%20li%20%7B%0Alist%2Dstyle%2Dtype%3A%20decimal%3B%0A%7D%0Ali%20li%20ol%20li%20%7B%0Alist%2Dstyle%2Dtype%3A%20decimal%3B%0A%7D%0A%0Aol%2Eoutline%20li%3Ahover%20%7B%20cursor%3A%20pointer%20%7D%0Aol%2Eoutline%20li%2Enofold%3Ahover%20%7B%20cursor%3A%20default%20%7D%0Aul%2Eoutline%20li%3Ahover%20%7B%20cursor%3A%20pointer%20%7D%0Aul%2Eoutline%20li%2Enofold%3Ahover%20%7B%20cursor%3A%20default%20%7D%0Aol%2Eoutline%20%7B%20list%2Dstyle%3Adecimal%3B%20%7D%0Aol%2Eoutline%20ol%20%7B%20list%2Dstyle%2Dtype%3Alower%2Dalpha%20%7D%0Aol%2Eoutline%20li%2Enofold%20%7B%0Apadding%3A%200%200%200%2020px%3B%0Abackground%3A%20transparent%20url%28data%3Aimage%2Fgif%3B%20qs%3D0%2E5%3Bbase64%2CR0lGODdhCQAJAIACAMzMzOvr%2FywAAAAACQAJAAACD4SPoRvG614Dctb4MEMcFAA7%29%20no%2Drepeat%200px%200%2E5em%3B%0A%7D%0Aol%2Eoutline%20li%2Eunfolded%20%7B%0Apadding%3A%200%200%200%2020px%3B%0Abackground%3A%20transparent%20url%28data%3Aimage%2Fgif%3B%20qs%3D0%2E5%3Bbase64%2CR0lGODdhCQAJAKEDAMPD%2F8zMzOvr%2F%2F%2F%2F%2FywAAAAACQAJAAACEYyPoivG614LAlg7ZZbxoR8UADs%3D%29%20no%2Drepeat%200px%200%2E5em%3B%0A%7D%0Aol%2Eoutline%20li%2Efolded%20%7B%0Apadding%3A%200%200%200%2020px%3B%0Abackground%3A%20transparent%20url%28data%3Aimage%2Fgif%3B%20qs%3D0%2E5%3Bbase64%2CR0lGODdhCQAJAKEDAMPD%2F8zMzOvr%2F%2F%2F%2F%2FywAAAAACQAJAAACFIyPoiu2sJyCyoF7W3hxz850CFIAADs%3D%29%20no%2Drepeat%200px%200%2E5em%3B%0A%7D%0Aol%2Eoutline%20li%2Eunfolded%3Ahover%20%7B%0Apadding%3A%200%200%200%2020px%3B%0Abackground%3A%20transparent%20url%28data%3Aimage%2Fgif%3B%20qs%3D0%2E5%3Bbase64%2CR0lGODdhCQAJAKEDAAAAAAAA%2F8PD%2F%2F%2F%2F%2FywAAAAACQAJAAACEYSPoivG614DIlg7ZZbxoQ8UADs%3D%29%20no%2Drepeat%200px%200%2E5em%3B%0A%7D%0Aol%2Eoutline%20li%2Efolded%3Ahover%20%7B%0Apadding%3A%200%200%200%2020px%3B%0Abackground%3A%20transparent%20url%28data%3Aimage%2Fgif%3B%20qs%3D0%2E5%3Bbase64%2CR0lGODdhCQAJAKEDAAAAAAAA%2F8PD%2F%2F%2F%2F%2FywAAAAACQAJAAACFISPoiu2sZyCyoV7G3hxz850CFIAADs%3D%29%20no%2Drepeat%200px%200%2E5em%3B%0A%7D%0Aul%2Eoutline%20li%2Enofold%20%7B%0Apadding%3A%200%200%200%2020px%3B%0Abackground%3A%20transparent%20url%28data%3Aimage%2Fgif%3B%20qs%3D0%2E5%3Bbase64%2CR0lGODdhCQAJAIACAMzMzOvr%2FywAAAAACQAJAAACD4SPoRvG614Dctb4MEMcFAA7%29%20no%2Drepeat%200px%200%2E5em%3B%0A%7D%0Aul%2Eoutline%20li%2Eunfolded%20%7B%0Apadding%3A%200%200%200%2020px%3B%0Abackground%3A%20transparent%20url%28data%3Aimage%2Fgif%3B%20qs%3D0%2E5%3Bbase64%2CR0lGODdhCQAJAKEDAMPD%2F8zMzOvr%2F%2F%2F%2F%2FywAAAAACQAJAAACEYyPoivG614LAlg7ZZbxoR8UADs%3D%29%20no%2Drepeat%200px%200%2E5em%3B%0A%7D%0Aul%2Eoutline%20li%2Efolded%20%7B%0Apadding%3A%200%200%200%2020px%3B%0Abackground%3A%20transparent%20url%28data%3Aimage%2Fgif%3B%20qs%3D0%2E5%3Bbase64%2CR0lGODdhCQAJAKEDAMPD%2F8zMzOvr%2F%2F%2F%2F%2FywAAAAACQAJAAACFIyPoiu2sJyCyoF7W3hxz850CFIAADs%3D%29%20no%2Drepeat%200px%200%2E5em%3B%0A%7D%0Aul%2Eoutline%20li%2Eunfolded%3Ahover%20%7B%0Apadding%3A%200%200%200%2020px%3B%0Abackground%3A%20transparent%20url%28data%3Aimage%2Fgif%3B%20qs%3D0%2E5%3Bbase64%2CR0lGODdhCQAJAKEDAAAAAAAA%2F8PD%2F%2F%2F%2F%2FywAAAAACQAJAAACEYSPoivG614DIlg7ZZbxoQ8UADs%3D%29%20no%2Drepeat%200px%200%2E5em%3B%0A%7D%0Aul%2Eoutline%20li%2Efolded%3Ahover%20%7B%0Apadding%3A%200%200%200%2020px%3B%0Abackground%3A%20transparent%20url%28data%3Aimage%2Fgif%3B%20qs%3D0%2E5%3Bbase64%2CR0lGODdhCQAJAKEDAAAAAAAA%2F8PD%2F%2F%2F%2F%2FywAAAAACQAJAAACFISPoiu2sZyCyoV7G3hxz850CFIAADs%3D%29%20no%2Drepeat%200px%200%2E5em%3B%0A%7D%0A%0Aa%2Etitleslide%20%7B%20font%2Dweight%3A%20bold%3B%20font%2Dstyle%3A%20italic%20%7D%0A%0Aimg%2Ehidden%20%7B%20display%3A%20none%3B%20visibility%3A%20hidden%20%7D%0Adiv%2Einitial%5Fprompt%20%7B%20display%3A%20none%3B%20visibility%3A%20hidden%20%7D%0Adiv%2Eslide%20%7B%0Avisibility%3A%20visible%3B%0Aposition%3A%20inherit%3B%0A%7D%0Adiv%2Ehandout%20%7B%0Aborder%2Dtop%2Dstyle%3A%20solid%3B%0Aborder%2Dtop%2Dwidth%3A%20thin%3B%0Aborder%2Dtop%2Dcolor%3A%20black%3B%0A%7D%0A%40media%20screen%20%7B%0A%2Ehidden%20%7B%20display%3A%20none%3B%20visibility%3A%20visible%20%7D%0Adiv%2Eslide%2Ehidden%20%7B%20display%3A%20block%3B%20visibility%3A%20visible%20%7D%0Adiv%2Ehandout%2Ehidden%20%7B%20display%3A%20block%3B%20visibility%3A%20visible%20%7D%0Adiv%2Ebackground%20%7B%20display%3A%20none%3B%20visibility%3A%20hidden%20%7D%0Abody%2Esingle%5Fslide%20div%2Einitial%5Fprompt%20%7B%20display%3A%20block%3B%20visibility%3A%20visible%20%7D%0Abody%2Esingle%5Fslide%20div%2Ebackground%20%7B%20display%3A%20block%3B%20visibility%3A%20visible%20%7D%0Abody%2Esingle%5Fslide%20div%2Ebackground%2Ehidden%20%7B%20display%3A%20none%3B%20visibility%3A%20hidden%20%7D%0Abody%2Esingle%5Fslide%20%2Einvisible%20%7B%20visibility%3A%20hidden%20%7D%0Abody%2Esingle%5Fslide%20%2Ehidden%20%7B%20display%3A%20none%3B%20visibility%3A%20hidden%20%7D%0Abody%2Esingle%5Fslide%20div%2Eslide%20%7B%20position%3A%20absolute%20%7D%0Abody%2Esingle%5Fslide%20div%2Ehandout%20%7B%20display%3A%20none%3B%20visibility%3A%20hidden%20%7D%0A%7D%0A%40media%20print%20%7B%0A%2Ehidden%20%7B%20display%3A%20block%3B%20visibility%3A%20visible%20%7D%0Adiv%2Eslide%20pre%20%7B%20font%2Dsize%3A%2060%25%3B%20padding%2Dleft%3A%200%2E5em%3B%20%7D%0Adiv%2Etoolbar%20%7B%20display%3A%20none%3B%20visibility%3A%20hidden%3B%20%7D%0Adiv%2Eslidy%5Ftoc%20%7B%20display%3A%20none%3B%20visibility%3A%20hidden%3B%20%7D%0Adiv%2Ebackground%20%7B%20display%3A%20none%3B%20visibility%3A%20hidden%3B%20%7D%0Adiv%2Eslide%20%7B%20page%2Dbreak%2Dbefore%3A%20always%20%7D%0A%0Adiv%2Eslide%2Efirst%2Dslide%20%7B%20page%2Dbreak%2Dbefore%3A%20avoid%20%7D%0A%7D%0A" rel="stylesheet" type="text/css" media="screen, projection, print" />
@@ -21,282 +84,390 @@
 </head>
 <body>
 <div class="slide titlepage">
-  <h1 class="title">Introduction to Software Design Patterns</h1>
+  <h1 class="title">Composition, Composite, Components</h1>
   <p class="author">
 Dmytro Ivanov
   </p>
   <p class="date">Nov, 2021</p>
 </div>
-<div id="intro" class="title-slide slide section level1">
-<h1>Intro</h1>
+<div id="composition" class="title-slide slide section level1">
+<h1>Composition</h1>
 
 </div>
-<div id="little-about-me" class="slide section level2">
-<h1>Little about me</h1>
-<p>Dmytro</p>
-<p>Background:</p>
-<ul>
-<li>BS in Applied mathematics</li>
-<li>C/C++/C#/Python/Lua</li>
-<li>Engine / Systems / Low level</li>
-</ul>
-<p>Work:</p>
-<ul>
-<li>Unity</li>
-<li>Spotify</li>
-<li>King</li>
-</ul>
-<p>Interests:</p>
-<ul>
-<li>Electronics</li>
-<li>Sports: cycling, snowboarding, kayaking, etc</li>
-<li>A bit of flying</li>
-</ul>
+<div id="composition-1" class="slide section level2">
+<h1>Composition</h1>
+<p>Broadly: combining objects or data into more complex objects.</p>
+<p>Introduced in 1959 in COBOL as records, where record is a collection of related data, “Personal Record”.</p>
+<p>Originally meant just data composition:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode numberSource csharp number-lines"><code class="sourceCode cs"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw">struct</span> Player</span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="op">{</span></span>
+<span id="cb1-3"><a href="#cb1-3"></a>    Vector2 position<span class="op">;</span></span>
+<span id="cb1-4"><a href="#cb1-4"></a>    Vector2 velocity<span class="op">;</span></span>
+<span id="cb1-5"><a href="#cb1-5"></a>    Sprite character<span class="op">;</span></span>
+<span id="cb1-6"><a href="#cb1-6"></a><span class="op">}</span></span></code></pre></div>
+<p>Just a few years later in 1962 with Simula the concept developed into object/behavioral composition:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode numberSource csharp number-lines"><code class="sourceCode cs"><span id="cb2-1"><a href="#cb2-1"></a><span class="kw">struct</span> Player</span>
+<span id="cb2-2"><a href="#cb2-2"></a><span class="op">{</span></span>
+<span id="cb2-3"><a href="#cb2-3"></a>    Vector2 position<span class="op">;</span></span>
+<span id="cb2-4"><a href="#cb2-4"></a>    Vector2 velocity<span class="op">;</span></span>
+<span id="cb2-5"><a href="#cb2-5"></a>    Sprite character<span class="op">;</span></span>
+<span id="cb2-6"><a href="#cb2-6"></a>    Sprite weapon<span class="op">;</span></span>
+<span id="cb2-7"><a href="#cb2-7"></a></span>
+<span id="cb2-8"><a href="#cb2-8"></a>    <span class="dt">void</span> <span class="fu">Jump</span><span class="op">()</span></span>
+<span id="cb2-9"><a href="#cb2-9"></a>    <span class="op">{</span></span>
+<span id="cb2-10"><a href="#cb2-10"></a>        <span class="kw">if</span> <span class="op">(</span><span class="fu">IsTouching</span><span class="op">(</span>character<span class="op">,</span> Ground<span class="op">))</span></span>
+<span id="cb2-11"><a href="#cb2-11"></a>            velocity<span class="op">.</span><span class="fu">y</span> <span class="op">+=</span> <span class="dv">10</span><span class="op">;</span></span>
+<span id="cb2-12"><a href="#cb2-12"></a>    <span class="op">}</span></span>
+<span id="cb2-13"><a href="#cb2-13"></a></span>
+<span id="cb2-14"><a href="#cb2-14"></a>    <span class="dt">void</span> <span class="fu">Render</span><span class="op">()</span></span>
+<span id="cb2-15"><a href="#cb2-15"></a>    <span class="op">{</span></span>
+<span id="cb2-16"><a href="#cb2-16"></a>        character<span class="op">.</span><span class="fu">Render</span><span class="op">();</span></span>
+<span id="cb2-17"><a href="#cb2-17"></a>        weapon<span class="op">.</span><span class="fu">Render</span><span class="op">();</span></span>
+<span id="cb2-18"><a href="#cb2-18"></a>    <span class="op">}</span></span>
+<span id="cb2-19"><a href="#cb2-19"></a><span class="op">}</span></span></code></pre></div>
 </div>
-<div id="course-goals" class="slide section level2">
-<h1>Course Goals</h1>
-<p>Go from “We don’t know what we don’t know” to “We know what we don’t know”.</p>
-<p>Learn new tools to solve problems.</p>
-<p>Understand the properties and the context behind the tools.</p>
-<p>Have fun :)</p>
+<div id="composition-2" class="slide section level2">
+<h1>Composition</h1>
+<p>Note composition is generally different from polymorphism:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode numberSource csharp number-lines"><code class="sourceCode cs"><span id="cb3-1"><a href="#cb3-1"></a><span class="kw">public</span> <span class="kw">class</span> Shape</span>
+<span id="cb3-2"><a href="#cb3-2"></a><span class="op">{</span></span>
+<span id="cb3-3"><a href="#cb3-3"></a>    Vector2 position<span class="op">;</span></span>
+<span id="cb3-4"><a href="#cb3-4"></a>    Vector2 size<span class="op">;</span></span>
+<span id="cb3-5"><a href="#cb3-5"></a></span>
+<span id="cb3-6"><a href="#cb3-6"></a>    <span class="kw">public</span> <span class="kw">virtual</span> <span class="dt">void</span> <span class="fu">Draw</span><span class="op">()</span> <span class="op">{</span> <span class="op">}</span></span>
+<span id="cb3-7"><a href="#cb3-7"></a><span class="op">}</span></span>
+<span id="cb3-8"><a href="#cb3-8"></a></span>
+<span id="cb3-9"><a href="#cb3-9"></a><span class="kw">public</span> <span class="kw">class</span> Circle <span class="op">:</span> Shape</span>
+<span id="cb3-10"><a href="#cb3-10"></a><span class="op">{</span></span>
+<span id="cb3-11"><a href="#cb3-11"></a>    <span class="kw">public</span> <span class="kw">override</span> <span class="dt">void</span> <span class="fu">Draw</span><span class="op">()</span> <span class="op">{</span> <span class="op">}</span></span>
+<span id="cb3-12"><a href="#cb3-12"></a><span class="op">}</span></span></code></pre></div>
+<p><code>Circle</code> is a subtype of <code>Shape</code> rather than a composition of <code>Shape</code> with something.</p>
 </div>
-<div id="course-structure" class="slide section level2">
-<h1>Course Structure</h1>
-<p>From Monday to Thursday inclusive:</p>
-<ul>
-<li>One or two lectures 10:30 - 12:30, small break in between.</li>
-<li>Mentoring / self study 13:30 - 15:30.</li>
-<li>Allocate some time for graded assignment, when you use a pattern for the first time it’s likely to take a few tries.</li>
-<li>On the last day of the course, let’s make “show &amp; tell” if you want, poke me if you’re interested in presenting.</li>
-</ul>
-<p>In general:</p>
-<ul>
-<li>If you have questions, stop me at any time.</li>
-<li>Focus on properties, not names. “I need something with properties X, Y, Z there was a pattern just like that somewhere” is a very good outcome.</li>
-<li>Some patterns are less distinct by nature, don’t worry about it.</li>
-<li>Good to discuss in groups to get different perspectives.</li>
-</ul>
-<p>All lectures will be available later on <a href="https://jimon.github.io/fgdesignpatterns21/">Github pages</a> or <a href="https://github.com/jimon/fgdesignpatterns21">Github repo</a>.</p>
+<div id="aggregation" class="slide section level2">
+<h1>Aggregation</h1>
+<p>Same as composition, but lifetime is detached now:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode numberSource cpp number-lines"><code class="sourceCode cpp"><span id="cb4-1"><a href="#cb4-1"></a><span class="kw">struct</span> Player</span>
+<span id="cb4-2"><a href="#cb4-2"></a><span class="op">{</span></span>
+<span id="cb4-3"><a href="#cb4-3"></a>    Vector2 position<span class="op">;</span></span>
+<span id="cb4-4"><a href="#cb4-4"></a>    Vector2 velocity<span class="op">;</span></span>
+<span id="cb4-5"><a href="#cb4-5"></a>    Collider<span class="op">*</span> collider<span class="op">;</span></span>
+<span id="cb4-6"><a href="#cb4-6"></a>    Sprite<span class="op">*</span> character<span class="op">;</span></span>
+<span id="cb4-7"><a href="#cb4-7"></a>    Sprite<span class="op">*</span> weapon<span class="op">;</span></span>
+<span id="cb4-8"><a href="#cb4-8"></a>    Animator<span class="op">*</span> animatorController<span class="op">;</span></span>
+<span id="cb4-9"><a href="#cb4-9"></a><span class="op">}</span></span></code></pre></div>
+<p>Because fields are pointers, lifetime of <code>Player</code> struct has no influence on lifetime of <code>Collider</code>, <code>Sprite</code>, etc.</p>
 </div>
-<div id="graded-assignment" class="slide section level2">
-<h1>Graded assignment</h1>
-<h3 id="what">What</h3>
-<p>Make a game, where features are implement with help of patterns.</p>
-<p>Feature suggestion:</p>
-<ul>
-<li>Skill tree</li>
-<li>Inventory</li>
-<li>Store</li>
-<li>Crafting</li>
-<li>Power-ups / Buffs / etc</li>
-<li>Combos</li>
-<li>Notifications</li>
-<li>Achievements</li>
-<li>Interactive storytelling</li>
-<li>In-game editor</li>
-</ul>
-<p>Optionally, could be interesting to try to implement it as no-coding-required game systems. Meaning someone with no coding skills could use your crafting system to implement new crafting rules in your game.</p>
-<h3 id="grading">Grading</h3>
-<ul>
-<li>For Godkänt: Use minimum of 3 patterns in a context of game features.</li>
-<li>For Väl godkänt: Use minimum of 5 patterns in a context of game features.</li>
-</ul>
+<div id="composite-pattern" class="slide section level2">
+<h1>Composite pattern</h1>
+<p>Generally a composition of a group of objects that can be treated the same way as a single instance.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode numberSource csharp number-lines"><code class="sourceCode cs"><span id="cb5-1"><a href="#cb5-1"></a><span class="kw">interface</span> IStoreItem</span>
+<span id="cb5-2"><a href="#cb5-2"></a><span class="op">{</span></span>
+<span id="cb5-3"><a href="#cb5-3"></a>    <span class="dt">void</span> <span class="fu">Buy</span><span class="op">();</span></span>
+<span id="cb5-4"><a href="#cb5-4"></a>    <span class="dt">int</span> <span class="fu">GetPrice</span><span class="op">();</span></span>
+<span id="cb5-5"><a href="#cb5-5"></a><span class="op">}</span></span>
+<span id="cb5-6"><a href="#cb5-6"></a></span>
+<span id="cb5-7"><a href="#cb5-7"></a><span class="kw">class</span> CoinPack1000 <span class="op">:</span> IStoreItem</span>
+<span id="cb5-8"><a href="#cb5-8"></a><span class="op">{</span></span>
+<span id="cb5-9"><a href="#cb5-9"></a>    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">Buy</span><span class="op">()</span> <span class="op">{</span>  <span class="op">}</span></span>
+<span id="cb5-10"><a href="#cb5-10"></a>    <span class="kw">public</span> <span class="dt">int</span> <span class="fu">GetPrice</span><span class="op">()</span> <span class="op">{</span> <span class="kw">return</span> <span class="dv">1</span><span class="op">;</span> <span class="op">}</span></span>
+<span id="cb5-11"><a href="#cb5-11"></a><span class="op">}</span></span>
+<span id="cb5-12"><a href="#cb5-12"></a></span>
+<span id="cb5-13"><a href="#cb5-13"></a><span class="kw">class</span> GemPack10 <span class="op">:</span> IStoreItem</span>
+<span id="cb5-14"><a href="#cb5-14"></a><span class="op">{</span></span>
+<span id="cb5-15"><a href="#cb5-15"></a>    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">Buy</span><span class="op">()</span> <span class="op">{</span>  <span class="op">}</span></span>
+<span id="cb5-16"><a href="#cb5-16"></a>    <span class="kw">public</span> <span class="dt">int</span> <span class="fu">GetPrice</span><span class="op">()</span> <span class="op">{</span> <span class="kw">return</span> <span class="dv">2</span><span class="op">;</span> <span class="op">}</span></span>
+<span id="cb5-17"><a href="#cb5-17"></a><span class="op">}</span></span>
+<span id="cb5-18"><a href="#cb5-18"></a></span>
+<span id="cb5-19"><a href="#cb5-19"></a><span class="kw">class</span> CompositeStoreItem <span class="op">:</span> IStoreItem</span>
+<span id="cb5-20"><a href="#cb5-20"></a><span class="op">{</span></span>
+<span id="cb5-21"><a href="#cb5-21"></a>    <span class="kw">private</span> List<span class="op">&lt;</span>IStoreItem<span class="op">&gt;</span> _items<span class="op">;</span></span>
+<span id="cb5-22"><a href="#cb5-22"></a></span>
+<span id="cb5-23"><a href="#cb5-23"></a>    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">Add</span><span class="op">(</span>IStoreItem item<span class="op">)</span> <span class="op">{</span> _items<span class="op">.</span><span class="fu">Add</span><span class="op">(</span>item<span class="op">);</span> <span class="op">}</span></span>
+<span id="cb5-24"><a href="#cb5-24"></a></span>
+<span id="cb5-25"><a href="#cb5-25"></a>    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">Buy</span><span class="op">()</span></span>
+<span id="cb5-26"><a href="#cb5-26"></a>    <span class="op">{</span></span>
+<span id="cb5-27"><a href="#cb5-27"></a>        <span class="kw">foreach</span> <span class="op">(</span><span class="dt">var</span> item <span class="kw">in</span> _items<span class="op">)</span></span>
+<span id="cb5-28"><a href="#cb5-28"></a>            item<span class="op">.</span><span class="fu">Buy</span><span class="op">();</span></span>
+<span id="cb5-29"><a href="#cb5-29"></a>    <span class="op">}</span></span>
+<span id="cb5-30"><a href="#cb5-30"></a></span>
+<span id="cb5-31"><a href="#cb5-31"></a>    <span class="kw">public</span> <span class="dt">int</span> <span class="fu">GetPrice</span><span class="op">()</span></span>
+<span id="cb5-32"><a href="#cb5-32"></a>    <span class="op">{</span></span>
+<span id="cb5-33"><a href="#cb5-33"></a>        <span class="kw">return</span> _items<span class="op">.</span><span class="fu">Select</span><span class="op">(</span>x <span class="op">=&gt;</span> x<span class="op">.</span><span class="fu">GetPrice</span><span class="op">()).</span><span class="fu">Sum</span><span class="op">();</span></span>
+<span id="cb5-34"><a href="#cb5-34"></a>    <span class="op">}</span></span>
+<span id="cb5-35"><a href="#cb5-35"></a><span class="op">}</span></span></code></pre></div>
 </div>
-<div id="graded-assignment-details" class="slide section level2">
-<h1>Graded assignment details</h1>
-<h3 id="how">How</h3>
-<ul>
-<li>Use C# and Unity.
-<ul>
-<li>Good idea to use 2020.3.x or 2021.2.x.</li>
-</ul></li>
-<li>Add a readme.txt (or readme.md) in the root folder and write down:
-<ul>
-<li>Your name, what is the game about</li>
-<li>List of patterns used in the game, where they used (file name, class or method name), and a short explanation how they were used in the game.</li>
-</ul></li>
-</ul>
-<pre><code>Dmytro Ivanov
-A simple platform game with potions, item store and inventory.
 
-Patterns:
-- Singleton, in `InventoryManager.cs` in `class InventoryManager` as `InventoryManager.instance`
-  Used singleton to make the single instance of the class that could be accessed from anywhere.
-- ...</code></pre>
-<h3 id="submission">Submission</h3>
-<ul>
-<li>Upload your project or provide a URL to the repository.</li>
-<li>If you plan to upload, would be nice if you only archive the following folders and their contents: “Assets”, “Package”, “ProjectSettings”, and “readme.txt” file.</li>
-</ul>
-<h3 id="tips">Tips</h3>
-<ul>
-<li>Good idea to try refactoring tools in Rider / Visual Studio.</li>
-<li>Good idea to also use version control! :)</li>
-</ul>
+<div id="components" class="title-slide slide section level1">
+<h1>Components</h1>
+
 </div>
-<div id="what-is-a-software-design-pattern" class="slide section level2">
-<h1>What is a software design pattern</h1>
-<p>Per <a href="https://en.wikipedia.org/wiki/Software_design_pattern">Wiki</a>:</p>
+<div id="components-1" class="slide section level2">
+<h1>Components</h1>
+<p><a href="http://gameprogrammingpatterns.com/component.html">Game Programming Patterns</a> describes components as:</p>
 <blockquote>
-<p>A software design pattern is a general, reusable solution to a commonly occurring problem within a given context in software design.</p>
+<p>A single entity spans multiple domains. To keep the domains isolated, the code for each is placed in its own component class. The entity is reduced to a simple container of components.</p>
+<p>A restaurant menu is a good analogy. If each entity is a monolithic class, it’s like you can only order combos. We need to have a separate class for each possible combination of features. To satisfy every customer, we would need dozens of combos.</p>
+<p>Components are à la carte dining - each customer can select just the dishes they want, and the menu is a list of the dishes they can choose from.</p>
 </blockquote>
-<p>Per <a href="https://en.wikipedia.org/wiki/A_Pattern_Language">A Pattern Language</a> by Christopher Alexander (1977)</p>
-<blockquote>
-<p>Each pattern describes a problem which occurs over and over again in our environment and then describes the core of the solution to that problem, in such a way that you can use this solution a million times over, without ever doing it in the same way twice.</p>
-</blockquote>
-<p>Closely related concept: Programming idiom.</p>
-<p>Per <a href="http://wiki.c2.com/?ProgrammingIdiom">c2 wiki</a>:</p>
-<blockquote>
-<p>An idiom is a phrase that doesn’t make literal sense, but makes sense once you’re acquainted with the culture in which it arose.</p>
-</blockquote>
+<p>Where an entity is any singular, identifiable, separate object.</p>
 </div>
-<div id="what-is-a-software-design-pattern-1" class="slide section level2">
-<h1>What is a software design pattern</h1>
-<p>Loosely grouped together:</p>
-<ul>
-<li>Problem statement</li>
-<li>Desired/expected properties</li>
-<li>“The key trick”</li>
-<li>Common implementations</li>
-</ul>
-<p>More of an art with happy little accidents.</p>
+<div id="without-components" class="slide section level2">
+<h1>Without components</h1>
+<div class="sourceCode" id="cb6"><pre class="sourceCode numberSource csharp number-lines"><code class="sourceCode cs"><span id="cb6-1"><a href="#cb6-1"></a><span class="kw">class</span> Player</span>
+<span id="cb6-2"><a href="#cb6-2"></a><span class="op">{</span></span>
+<span id="cb6-3"><a href="#cb6-3"></a>    Vector2 position<span class="op">;</span></span>
+<span id="cb6-4"><a href="#cb6-4"></a>    Vector2 velocity<span class="op">;</span></span>
+<span id="cb6-5"><a href="#cb6-5"></a>    Sprite character<span class="op">;</span></span>
+<span id="cb6-6"><a href="#cb6-6"></a></span>
+<span id="cb6-7"><a href="#cb6-7"></a>    <span class="dt">void</span> <span class="fu">Update</span><span class="op">(</span>Physics physics<span class="op">,</span> Renderer renderer<span class="op">,</span> Input input<span class="op">)</span></span>
+<span id="cb6-8"><a href="#cb6-8"></a>    <span class="op">{</span></span>
+<span id="cb6-9"><a href="#cb6-9"></a>        <span class="kw">if</span> <span class="op">(</span>input<span class="op">.</span><span class="fu">GetDirection</span><span class="op">()</span> <span class="op">==</span> Input<span class="op">.</span><span class="fu">Left</span><span class="op">)</span></span>
+<span id="cb6-10"><a href="#cb6-10"></a>            velocity <span class="op">=</span> <span class="kw">new</span> <span class="fu">Vector2</span><span class="op">(-</span><span class="dv">1</span><span class="op">,</span> <span class="dv">0</span><span class="op">);</span></span>
+<span id="cb6-11"><a href="#cb6-11"></a>        <span class="kw">else</span> <span class="kw">if</span> <span class="op">(</span>input<span class="op">.</span><span class="fu">GetDirection</span><span class="op">()</span> <span class="op">==</span> Input<span class="op">.</span><span class="fu">Right</span><span class="op">)</span></span>
+<span id="cb6-12"><a href="#cb6-12"></a>            velocity <span class="op">=</span> <span class="kw">new</span> <span class="fu">Vector2</span><span class="op">(</span><span class="dv">1</span><span class="op">,</span> <span class="dv">0</span><span class="op">);</span></span>
+<span id="cb6-13"><a href="#cb6-13"></a>        <span class="kw">else</span></span>
+<span id="cb6-14"><a href="#cb6-14"></a>            velocity <span class="op">=</span> <span class="kw">new</span> <span class="fu">Vector2</span><span class="op">(</span><span class="dv">0</span><span class="op">,</span> <span class="dv">0</span><span class="op">);</span></span>
+<span id="cb6-15"><a href="#cb6-15"></a></span>
+<span id="cb6-16"><a href="#cb6-16"></a>        position <span class="op">=</span> physics<span class="op">.</span><span class="fu">Move</span><span class="op">(</span>position<span class="op">,</span> velocity <span class="op">*</span> Time<span class="op">.</span><span class="fu">deltaTime</span><span class="op">);</span></span>
+<span id="cb6-17"><a href="#cb6-17"></a></span>
+<span id="cb6-18"><a href="#cb6-18"></a>        <span class="kw">if</span> <span class="op">(</span>velocity<span class="op">.</span><span class="fu">x</span> <span class="op">&gt;=</span> <span class="dv">0</span><span class="op">)</span></span>
+<span id="cb6-19"><a href="#cb6-19"></a>            renderer<span class="op">.</span><span class="fu">Draw</span><span class="op">(</span>character<span class="op">,</span> position<span class="op">);</span></span>
+<span id="cb6-20"><a href="#cb6-20"></a>        <span class="kw">else</span></span>
+<span id="cb6-21"><a href="#cb6-21"></a>            renderer<span class="op">.</span><span class="fu">Draw</span><span class="op">(</span>character<span class="op">,</span> position<span class="op">,</span> flip<span class="op">:</span> FlipAxis<span class="op">.</span><span class="fu">X</span><span class="op">);</span></span>
+<span id="cb6-22"><a href="#cb6-22"></a>    <span class="op">}</span></span>
+<span id="cb6-23"><a href="#cb6-23"></a><span class="op">}</span></span></code></pre></div>
 </div>
-<div id="historical-context" class="slide section level2">
-<h1>Historical context</h1>
-<ul>
-<li><a href="http://rigaux.org/language-study/diagram-light.png">Lightweight genealogical tree</a></li>
-<li><a href="https://info.ucl.ac.be/~pvr/paradigmsDIAGRAMeng108.pdf">The principal programming paradigms</a></li>
-</ul>
-<p>Remark regarding patterns and DSL’s.</p>
+<div id="with-components" class="slide section level2">
+<h1>With components</h1>
+<div class="columns">
+<div class="column">
+<div class="sourceCode" id="cb7"><pre class="sourceCode numberSource csharp number-lines"><code class="sourceCode cs"><span id="cb7-1"><a href="#cb7-1"></a><span class="kw">class</span> PhysicsBodyComponent</span>
+<span id="cb7-2"><a href="#cb7-2"></a><span class="op">{</span></span>
+<span id="cb7-3"><a href="#cb7-3"></a>    Vector2 position<span class="op">;</span></span>
+<span id="cb7-4"><a href="#cb7-4"></a>    Vector2 velocity<span class="op">;</span></span>
+<span id="cb7-5"><a href="#cb7-5"></a>    <span class="dt">void</span> <span class="fu">Update</span><span class="op">(</span>Physics physicsWorld<span class="op">)</span></span>
+<span id="cb7-6"><a href="#cb7-6"></a>    <span class="op">{</span></span>
+<span id="cb7-7"><a href="#cb7-7"></a>        position <span class="op">=</span> physicsWorld<span class="op">.</span><span class="fu">Move</span><span class="op">(</span>position<span class="op">,</span> velocity <span class="op">*</span> Time<span class="op">.</span><span class="fu">deltaTime</span><span class="op">);</span></span>
+<span id="cb7-8"><a href="#cb7-8"></a>    <span class="op">}</span></span>
+<span id="cb7-9"><a href="#cb7-9"></a><span class="op">}</span></span>
+<span id="cb7-10"><a href="#cb7-10"></a></span>
+<span id="cb7-11"><a href="#cb7-11"></a><span class="kw">class</span> CharacterInputComponent</span>
+<span id="cb7-12"><a href="#cb7-12"></a><span class="op">{</span></span>
+<span id="cb7-13"><a href="#cb7-13"></a>    <span class="dt">void</span> <span class="fu">Update</span><span class="op">(</span>PhysicsBodyComponent physics<span class="op">,</span> Input input<span class="op">)</span></span>
+<span id="cb7-14"><a href="#cb7-14"></a>    <span class="op">{</span></span>
+<span id="cb7-15"><a href="#cb7-15"></a>        <span class="kw">if</span> <span class="op">(</span>input<span class="op">.</span><span class="fu">GetDirection</span><span class="op">()</span> <span class="op">==</span> Input<span class="op">.</span><span class="fu">Left</span><span class="op">)</span></span>
+<span id="cb7-16"><a href="#cb7-16"></a>            physics<span class="op">.</span><span class="fu">velocity</span> <span class="op">=</span> <span class="kw">new</span> <span class="fu">Vector2</span><span class="op">(-</span><span class="dv">1</span><span class="op">,</span> <span class="dv">0</span><span class="op">);</span></span>
+<span id="cb7-17"><a href="#cb7-17"></a>        <span class="kw">else</span> <span class="kw">if</span> <span class="op">(</span>input<span class="op">.</span><span class="fu">GetDirection</span><span class="op">()</span> <span class="op">==</span> Input<span class="op">.</span><span class="fu">Right</span><span class="op">)</span></span>
+<span id="cb7-18"><a href="#cb7-18"></a>            physics<span class="op">.</span><span class="fu">velocity</span> <span class="op">=</span> <span class="kw">new</span> <span class="fu">Vector2</span><span class="op">(</span><span class="dv">1</span><span class="op">,</span> <span class="dv">0</span><span class="op">);</span></span>
+<span id="cb7-19"><a href="#cb7-19"></a>        <span class="kw">else</span></span>
+<span id="cb7-20"><a href="#cb7-20"></a>            physics<span class="op">.</span><span class="fu">velocity</span> <span class="op">=</span> <span class="kw">new</span> <span class="fu">Vector2</span><span class="op">(</span><span class="dv">0</span><span class="op">,</span> <span class="dv">0</span><span class="op">);</span></span>
+<span id="cb7-21"><a href="#cb7-21"></a>    <span class="op">}</span></span>
+<span id="cb7-22"><a href="#cb7-22"></a><span class="op">}</span></span></code></pre></div>
+</div><div class="column">
+<div class="sourceCode" id="cb8"><pre class="sourceCode numberSource csharp number-lines"><code class="sourceCode cs"><span id="cb8-1"><a href="#cb8-1"></a><span class="kw">class</span> CharacterSpriteComponent</span>
+<span id="cb8-2"><a href="#cb8-2"></a><span class="op">{</span></span>
+<span id="cb8-3"><a href="#cb8-3"></a>    Sprite character<span class="op">;</span></span>
+<span id="cb8-4"><a href="#cb8-4"></a>    <span class="dt">void</span> <span class="fu">Update</span><span class="op">(</span>PhysicsBodyComponent physics<span class="op">,</span> Renderer renderer<span class="op">)</span></span>
+<span id="cb8-5"><a href="#cb8-5"></a>    <span class="op">{</span></span>
+<span id="cb8-6"><a href="#cb8-6"></a>        <span class="kw">if</span> <span class="op">(</span>physics<span class="op">.</span><span class="fu">velocity</span><span class="op">.</span><span class="fu">x</span> <span class="op">&gt;=</span> <span class="dv">0</span><span class="op">)</span></span>
+<span id="cb8-7"><a href="#cb8-7"></a>            renderer<span class="op">.</span><span class="fu">Draw</span><span class="op">(</span>character<span class="op">,</span> physics<span class="op">.</span><span class="fu">position</span><span class="op">);</span></span>
+<span id="cb8-8"><a href="#cb8-8"></a>        <span class="kw">else</span></span>
+<span id="cb8-9"><a href="#cb8-9"></a>            renderer<span class="op">.</span><span class="fu">Draw</span><span class="op">(</span>character<span class="op">,</span> physics<span class="op">.</span><span class="fu">position</span><span class="op">,</span> flip<span class="op">:</span> FlipAxis<span class="op">.</span><span class="fu">X</span><span class="op">);</span></span>
+<span id="cb8-10"><a href="#cb8-10"></a>    <span class="op">}</span></span>
+<span id="cb8-11"><a href="#cb8-11"></a><span class="op">}</span></span>
+<span id="cb8-12"><a href="#cb8-12"></a></span>
+<span id="cb8-13"><a href="#cb8-13"></a><span class="kw">class</span> Player</span>
+<span id="cb8-14"><a href="#cb8-14"></a><span class="op">{</span></span>
+<span id="cb8-15"><a href="#cb8-15"></a>    PhysicsBodyComponent physicsComponent<span class="op">;</span></span>
+<span id="cb8-16"><a href="#cb8-16"></a>    CharacterInputComponent inputComponent<span class="op">;</span></span>
+<span id="cb8-17"><a href="#cb8-17"></a>    CharacterSpriteComponent spriteComponent<span class="op">;</span></span>
+<span id="cb8-18"><a href="#cb8-18"></a></span>
+<span id="cb8-19"><a href="#cb8-19"></a>    <span class="dt">void</span> <span class="fu">Update</span><span class="op">(</span>Physics physics<span class="op">,</span> Renderer renderer<span class="op">,</span> Input input<span class="op">)</span></span>
+<span id="cb8-20"><a href="#cb8-20"></a>    <span class="op">{</span></span>
+<span id="cb8-21"><a href="#cb8-21"></a>        inputComponent<span class="op">.</span><span class="fu">Update</span><span class="op">(</span>physicsComponent<span class="op">,</span> input<span class="op">);</span></span>
+<span id="cb8-22"><a href="#cb8-22"></a>        physicsComponent<span class="op">.</span><span class="fu">Update</span><span class="op">(</span>physics<span class="op">);</span></span>
+<span id="cb8-23"><a href="#cb8-23"></a>        spriteComponent<span class="op">.</span><span class="fu">Update</span><span class="op">(</span>physicsComponent<span class="op">,</span> renderer<span class="op">);</span></span>
+<span id="cb8-24"><a href="#cb8-24"></a>    <span class="op">}</span></span>
+<span id="cb8-25"><a href="#cb8-25"></a><span class="op">}</span></span></code></pre></div>
 </div>
-<div id="design-patterns-usage-today" class="slide section level2">
-<h1>Design Patterns usage today</h1>
-<p>I think patterns got a secondary role today, and data flows / performance become primary concerns.</p>
-<p>We still use patterns to:</p>
-<ul>
-<li>Easier to split larger problem into smaller ones with known/standard solutions.</li>
-<li>Communicate with other devs via a more higher level language (concepts instead of code).</li>
-</ul>
-<p>Hence the architecture of modern application is more than just sum of design patterns.</p>
-<p>In daily work, most folks don’t use the names of patterns but rather talk about the properties (nobody is talking about memento but everyone talks about serialization).</p>
 </div>
-<div id="new-code-vs-old-code" class="slide section level2">
-<h1>New code vs old code</h1>
-<p>When writing new code, patterns can help speed up design phase.</p>
-<p>When refactoring old code, patterns can help standardize code.</p>
-</div>
-<div id="patterns-and-anti-patterns" class="slide section level2">
-<h1>Patterns and anti-patterns</h1>
-<p>Every pattern might have positive properties in one context and negative properties in another.</p>
-</div>
-<div id="overview" class="slide section level2">
-<h1>Overview</h1>
-<p>Most patterns can be categorized into 4 types:</p>
+<p>This is almost exactly what Unity does:</p>
 <ul>
-<li>Creational</li>
-<li>Structural</li>
-<li>Behavioral</li>
-<li>Concurrency</li>
-</ul>
-</div>
-<div id="creational-patterns" class="slide section level2">
-<h1>Creational patterns</h1>
-<p>“Create an object for given data”:</p>
-<ul>
-<li>Builder</li>
-<li>Factory method</li>
-<li>Abstract factory</li>
-<li>Prototype</li>
-</ul>
-<p>“Manage object lifetime and initialization order for me”:</p>
-<ul>
-<li>Singleton</li>
-<li>Multiton</li>
-<li>Dependency injection</li>
-<li>Resource acquisition is initialization (RAII)</li>
-<li>Lazy initialization</li>
-<li>Object pool</li>
-</ul>
-</div>
-<div id="structural-patterns" class="slide section level2">
-<h1>Structural patterns</h1>
-<p>“I have these two things and I need them to fit together”:</p>
-<ul>
-<li>Adapter / Wrapper</li>
-<li>Bridge</li>
-<li>Decorator</li>
-<li>Proxy</li>
-</ul>
-<p>“I need a clean nice API to use”:</p>
-<ul>
-<li>Facade</li>
-<li>Front controller</li>
-</ul>
-<p>Others:</p>
-<ul>
-<li>Composite</li>
-<li>Flyweight</li>
-<li>Marker</li>
-<li>Module</li>
+<li>Instead of entity-class it uses <code>GameObject</code>, which is sealed so you can’t extend it, hence generally there is no <code>class Player : GameObject</code>, rather it’s just a generic component bag.</li>
+<li>Most scripting components are derived from <code>MonoBehaviour</code></li>
+<li>Managed in runtime with <code>AddComponent</code> / <code>GetComponent</code> / <code>Destroy</code></li>
+<li>Heavily relies on serialization of <code>GameObject</code> and <code>MonoBehaviour</code> to enable editor scene workflows.</li>
 </ul>
 </div>
-<div id="behavioral-patterns" class="slide section level2">
-<h1>Behavioral patterns</h1>
-<p>“I need to couple systems together”:</p>
-<ul>
-<li>Chain of responsibility</li>
-<li>Mediator</li>
-<li>Iterator</li>
-<li>Visitor</li>
-<li>Template method</li>
-<li>Observer</li>
-</ul>
-<p>“I need to represent state/objects/operations independent of particular instances”:</p>
-<ul>
-<li>Command</li>
-<li>Interpreter</li>
-<li>Memento</li>
-<li>Specification</li>
-<li>Strategy</li>
-<li>State</li>
-</ul>
-<p>“I need to encode behaviors when there is no object”:</p>
-<ul>
-<li>Null object</li>
-</ul>
+<div id="component-bag" class="slide section level2">
+<h1>Component bag</h1>
+<p>Every component bag needs to answer a crucial, architecture deciding property: is it possible to have more than one component of same type?</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode numberSource csharp number-lines"><code class="sourceCode cs"><span id="cb9-1"><a href="#cb9-1"></a><span class="kw">interface</span> IComponent</span>
+<span id="cb9-2"><a href="#cb9-2"></a><span class="op">{</span></span>
+<span id="cb9-3"><a href="#cb9-3"></a>    <span class="dt">void</span> <span class="fu">Update</span><span class="op">();</span></span>
+<span id="cb9-4"><a href="#cb9-4"></a><span class="op">}</span></span>
+<span id="cb9-5"><a href="#cb9-5"></a></span>
+<span id="cb9-6"><a href="#cb9-6"></a><span class="kw">class</span> Entity</span>
+<span id="cb9-7"><a href="#cb9-7"></a><span class="op">{</span></span>
+<span id="cb9-8"><a href="#cb9-8"></a>    IComponent<span class="op">[]</span> components<span class="op">;</span>                 <span class="co">// option 1</span></span>
+<span id="cb9-9"><a href="#cb9-9"></a>    Dictionary<span class="op">&lt;</span>Type<span class="op">,</span> IComponent<span class="op">&gt;</span> components<span class="op">;</span> <span class="co">// option 2</span></span>
+<span id="cb9-10"><a href="#cb9-10"></a></span>
+<span id="cb9-11"><a href="#cb9-11"></a>    <span class="dt">void</span> <span class="fu">Update</span><span class="op">()</span></span>
+<span id="cb9-12"><a href="#cb9-12"></a>    <span class="op">{</span></span>
+<span id="cb9-13"><a href="#cb9-13"></a>        <span class="kw">foreach</span> <span class="op">(</span><span class="dt">var</span> component <span class="kw">in</span> components<span class="op">)</span></span>
+<span id="cb9-14"><a href="#cb9-14"></a>            component<span class="op">.</span><span class="fu">Update</span><span class="op">();</span></span>
+<span id="cb9-15"><a href="#cb9-15"></a>    <span class="op">}</span></span>
+<span id="cb9-16"><a href="#cb9-16"></a><span class="op">}</span></span></code></pre></div>
+<p>Every Entity-Component system will fall into one of this two options. Unity is option 1 but most API’s makes you feel like option 2 like <code>GetComponent&lt;T&gt;()</code>.</p>
 </div>
-<div id="idioms" class="slide section level2">
-<h1>Idioms</h1>
-<p>We will also cover a few gamedev specific idioms:</p>
+<div id="coupling-between-components" class="slide section level2">
+<h1>Coupling between components</h1>
+<p>Now everything is decoupled, but input component needs to know about physics component, how is that done?</p>
 <ul>
-<li>Double buffer</li>
-<li>Dirty flag</li>
-<li>RAII</li>
-<li>Event queue</li>
+<li>In some engines entity is implemented as just a struct with pointers, like prior aggregation example. Then every component can know about the parent entity.</li>
+<li>In Unity every <code>MonoBehaviour</code> knows parent <code>GameObject</code> and can get any component via <code>GetComponent&lt;T&gt;()</code>. There are a few gotchas, how do we know that input is updated before physics? What if there is no physics component?</li>
+<li>Send message. Even more gotchas as this shifts problem from static typing to dynamic typing, and maybe to runtime if messages can be delayed.</li>
 </ul>
-<p>And spend a bit of time talking about <a href="https://en.wikipedia.org/wiki/SOLID">SOLID</a> and others.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode numberSource csharp number-lines"><code class="sourceCode cs"><span id="cb10-1"><a href="#cb10-1"></a><span class="kw">public</span> <span class="kw">class</span> Example1 <span class="op">:</span> MonoBehaviour</span>
+<span id="cb10-2"><a href="#cb10-2"></a><span class="op">{</span></span>
+<span id="cb10-3"><a href="#cb10-3"></a>    <span class="dt">void</span> <span class="fu">Start</span><span class="op">()</span></span>
+<span id="cb10-4"><a href="#cb10-4"></a>    <span class="op">{</span></span>
+<span id="cb10-5"><a href="#cb10-5"></a>        gameObject<span class="op">.</span><span class="fu">SendMessage</span><span class="op">(</span><span class="st">&quot;ApplyDamage&quot;</span><span class="op">,</span> <span class="fl">5.0</span><span class="op">);</span></span>
+<span id="cb10-6"><a href="#cb10-6"></a>    <span class="op">}</span></span>
+<span id="cb10-7"><a href="#cb10-7"></a><span class="op">}</span></span>
+<span id="cb10-8"><a href="#cb10-8"></a></span>
+<span id="cb10-9"><a href="#cb10-9"></a><span class="kw">public</span> <span class="kw">class</span> Example2 <span class="op">:</span> MonoBehaviour</span>
+<span id="cb10-10"><a href="#cb10-10"></a><span class="op">{</span></span>
+<span id="cb10-11"><a href="#cb10-11"></a>    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">ApplyDamage</span><span class="op">(</span><span class="dt">float</span> damage<span class="op">)</span></span>
+<span id="cb10-12"><a href="#cb10-12"></a>    <span class="op">{</span></span>
+<span id="cb10-13"><a href="#cb10-13"></a>        <span class="op">...</span></span>
+<span id="cb10-14"><a href="#cb10-14"></a>    <span class="op">}</span></span>
+<span id="cb10-15"><a href="#cb10-15"></a><span class="op">}</span></span></code></pre></div>
+<p>Generally some level of coupling is unavoidable simply because in the end of the day we need to get the work done.</p>
+<p>Choose coupling level based on separation of concerns and code reuse.</p>
+<p>Separation of concerns might let you split your code into many classes, but it’s hard to work with many of them, just adding them in Unity editor to the game object might be tedious. Facades might be a good idea here. E.g. some generic <code>GameStoreManager</code> that handles working with the rest of classes.</p>
 </div>
-<div id="concurrency-patterns" class="slide section level2">
-<h1>Concurrency patterns</h1>
-<p>Not covered in this class :(</p>
-<p>If you want to venture there, my advise would be to try bottom-up approach:</p>
-<p>What are we even trying to do:</p>
-<ul>
-<li>Context switch, CPU interrupts. There are no threads in hardware, it’s all illusion.</li>
-<li>“Memory Barriers: a Hardware View for Software Hackers” by Paul E. McKenney, 2009</li>
-<li>Leslie Lamport works: Sequential consistency, others.</li>
-<li>Parallel computing basics, map-reduce, SIMD/MIMD.</li>
-<li>Amdahl’s law and friends.</li>
-<li>Bonus: Virtual memory, page table, translation lookaside buffer (TLB). There is no memory allocation in hardware, it’s all illusion.</li>
-</ul>
-<p>The tools we have as software programmers:</p>
-<ul>
-<li>Threads.</li>
-<li>Semaphore, spinlock, read-write lock, etc.</li>
-<li>Condition variables, futex.</li>
-<li>Atomics and memory barriers.</li>
-<li>Read-copy-update.</li>
-</ul>
+
+<div id="ecs" class="title-slide slide section level1">
+<h1>ECS</h1>
+
+</div>
+<div id="ecs-1" class="slide section level2">
+<h1>ECS?</h1>
+<p>Ok, entities, components, what is ECS then? ECS adds one more: Entity-Component-System.</p>
+<div class="columns">
+<div class="column">
+<div class="sourceCode" id="cb11"><pre class="sourceCode numberSource csharp number-lines"><code class="sourceCode cs"><span id="cb11-1"><a href="#cb11-1"></a><span class="kw">interface</span> IComponent <span class="op">{</span> <span class="op">}</span></span>
+<span id="cb11-2"><a href="#cb11-2"></a></span>
+<span id="cb11-3"><a href="#cb11-3"></a><span class="kw">struct</span> PhysicsBodyComponent <span class="op">:</span> IComponent <span class="op">{</span></span>
+<span id="cb11-4"><a href="#cb11-4"></a>    Vector2 position<span class="op">;</span></span>
+<span id="cb11-5"><a href="#cb11-5"></a>    Vector2 velocity<span class="op">;</span></span>
+<span id="cb11-6"><a href="#cb11-6"></a><span class="op">}</span></span>
+<span id="cb11-7"><a href="#cb11-7"></a></span>
+<span id="cb11-8"><a href="#cb11-8"></a><span class="co">// tag component</span></span>
+<span id="cb11-9"><a href="#cb11-9"></a><span class="kw">struct</span> CharacterInputComponent <span class="op">:</span> IComponent <span class="op">{}</span></span>
+<span id="cb11-10"><a href="#cb11-10"></a></span>
+<span id="cb11-11"><a href="#cb11-11"></a><span class="kw">struct</span> CharacterSpriteComponent <span class="op">:</span> IComponent <span class="op">{</span></span>
+<span id="cb11-12"><a href="#cb11-12"></a>    Sprite character<span class="op">;</span></span>
+<span id="cb11-13"><a href="#cb11-13"></a><span class="op">}</span></span>
+<span id="cb11-14"><a href="#cb11-14"></a></span>
+<span id="cb11-15"><a href="#cb11-15"></a><span class="kw">struct</span> Entity <span class="op">{</span></span>
+<span id="cb11-16"><a href="#cb11-16"></a>    <span class="dt">int</span> physicsBodyIndex<span class="op">;</span></span>
+<span id="cb11-17"><a href="#cb11-17"></a>    <span class="dt">int</span> characterInputIndex<span class="op">;</span></span>
+<span id="cb11-18"><a href="#cb11-18"></a>    <span class="dt">int</span> characterSpriteIndex<span class="op">;</span></span>
+<span id="cb11-19"><a href="#cb11-19"></a><span class="op">}</span></span>
+<span id="cb11-20"><a href="#cb11-20"></a></span>
+<span id="cb11-21"><a href="#cb11-21"></a><span class="kw">struct</span> World <span class="op">{</span></span>
+<span id="cb11-22"><a href="#cb11-22"></a>    PhysicsBodyComponent<span class="op">[]</span> physicsBodies<span class="op">;</span></span>
+<span id="cb11-23"><a href="#cb11-23"></a>    CharacterInputComponent<span class="op">[]</span> characterInputs<span class="op">;</span></span>
+<span id="cb11-24"><a href="#cb11-24"></a>    CharacterSpriteComponent<span class="op">[]</span> characterSprites<span class="op">;</span></span>
+<span id="cb11-25"><a href="#cb11-25"></a><span class="op">}</span></span></code></pre></div>
+<p>Systems are important because processors are Single Instruction Multiple Data (SIMD). Tightly iterating over permutation of components and executing same operation over them enables more performant code. Versus in normal E-C approach where you need to pay many costs to invoke update for every component (virtual call, cache miss, etc).</p>
+<p>Another aspect is how do you store data of your components: AoS vs SoA vs AoSoA. While this particular design pattern is independent from storage architecture, most ECS frameworks focus primarily on efficient memory layouts.</p>
+</div><div class="column">
+<div class="sourceCode" id="cb12"><pre class="sourceCode numberSource csharp number-lines"><code class="sourceCode cs"><span id="cb12-1"><a href="#cb12-1"></a><span class="dt">void</span> <span class="fu">PhysicsBodySystem</span><span class="op">(</span>Physics physicsWorld<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb12-2"><a href="#cb12-2"></a>    <span class="kw">foreach</span><span class="op">(</span>PhysicsBodyComponent component <span class="kw">in</span></span>
+<span id="cb12-3"><a href="#cb12-3"></a>        world<span class="op">.</span><span class="fu">GetAllEntitiesSuchAs</span><span class="op">&lt;</span>PhysicsBodyComponent<span class="op">&gt;())</span></span>
+<span id="cb12-4"><a href="#cb12-4"></a>        component<span class="op">.</span><span class="fu">position</span> <span class="op">=</span> physicsWorld<span class="op">.</span><span class="fu">Move</span><span class="op">(</span>component<span class="op">.</span><span class="fu">position</span><span class="op">,</span></span>
+<span id="cb12-5"><a href="#cb12-5"></a>            component<span class="op">.</span><span class="fu">velocity</span> <span class="op">*</span> Time<span class="op">.</span><span class="fu">deltaTime</span><span class="op">);</span></span>
+<span id="cb12-6"><a href="#cb12-6"></a><span class="op">}</span></span>
+<span id="cb12-7"><a href="#cb12-7"></a></span>
+<span id="cb12-8"><a href="#cb12-8"></a><span class="dt">void</span> <span class="fu">CharacterInputSystem</span><span class="op">(</span>Input input<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb12-9"><a href="#cb12-9"></a>    <span class="kw">foreach</span><span class="op">((</span>PhysicsBodyComponent physics<span class="op">,</span> CharacterInputComponent _<span class="op">)</span> <span class="kw">in</span></span>
+<span id="cb12-10"><a href="#cb12-10"></a>        <span class="co">// Note this query is non-trivial</span></span>
+<span id="cb12-11"><a href="#cb12-11"></a>        world<span class="op">.</span><span class="fu">GetAllEntitiesSuchAs</span><span class="op">&lt;</span>PhysicsBodyComponent<span class="op">,</span> CharacterInputComponent<span class="op">&gt;())</span> <span class="op">{</span></span>
+<span id="cb12-12"><a href="#cb12-12"></a>        <span class="kw">if</span> <span class="op">(</span>input<span class="op">.</span><span class="fu">GetDirection</span><span class="op">()</span> <span class="op">==</span> Input<span class="op">.</span><span class="fu">Left</span><span class="op">)</span></span>
+<span id="cb12-13"><a href="#cb12-13"></a>            physics<span class="op">.</span><span class="fu">velocity</span> <span class="op">=</span> <span class="kw">new</span> <span class="fu">Vector2</span><span class="op">(-</span><span class="dv">1</span><span class="op">,</span> <span class="dv">0</span><span class="op">);</span></span>
+<span id="cb12-14"><a href="#cb12-14"></a>        <span class="kw">else</span> <span class="kw">if</span> <span class="op">(</span>input<span class="op">.</span><span class="fu">GetDirection</span><span class="op">()</span> <span class="op">==</span> Input<span class="op">.</span><span class="fu">Right</span><span class="op">)</span></span>
+<span id="cb12-15"><a href="#cb12-15"></a>            physics<span class="op">.</span><span class="fu">velocity</span> <span class="op">=</span> <span class="kw">new</span> <span class="fu">Vector2</span><span class="op">(</span><span class="dv">1</span><span class="op">,</span> <span class="dv">0</span><span class="op">);</span></span>
+<span id="cb12-16"><a href="#cb12-16"></a>        <span class="kw">else</span></span>
+<span id="cb12-17"><a href="#cb12-17"></a>            physics<span class="op">.</span><span class="fu">velocity</span> <span class="op">=</span> <span class="kw">new</span> <span class="fu">Vector2</span><span class="op">(</span><span class="dv">0</span><span class="op">,</span> <span class="dv">0</span><span class="op">);</span></span>
+<span id="cb12-18"><a href="#cb12-18"></a>    <span class="op">}</span></span>
+<span id="cb12-19"><a href="#cb12-19"></a><span class="op">}</span></span>
+<span id="cb12-20"><a href="#cb12-20"></a></span>
+<span id="cb12-21"><a href="#cb12-21"></a><span class="dt">void</span> <span class="fu">CharacterSpriteSystem</span><span class="op">(</span>Renderer renderer<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb12-22"><a href="#cb12-22"></a>    <span class="kw">foreach</span><span class="op">((</span>PhysicsBodyComponent physics<span class="op">,</span> CharacterSpriteComponent sprite<span class="op">)</span> <span class="kw">in</span></span>
+<span id="cb12-23"><a href="#cb12-23"></a>        world<span class="op">.</span><span class="fu">GetAllEntitiesSuchAs</span><span class="op">&lt;</span>PhysicsBodyComponent<span class="op">,</span> CharacterSpriteComponent<span class="op">&gt;())</span></span>
+<span id="cb12-24"><a href="#cb12-24"></a>        <span class="kw">if</span> <span class="op">(</span>physics<span class="op">.</span><span class="fu">velocity</span><span class="op">.</span><span class="fu">x</span> <span class="op">&gt;=</span> <span class="dv">0</span><span class="op">)</span></span>
+<span id="cb12-25"><a href="#cb12-25"></a>            renderer<span class="op">.</span><span class="fu">Draw</span><span class="op">(</span>sprite<span class="op">.</span><span class="fu">character</span><span class="op">,</span> physics<span class="op">.</span><span class="fu">position</span><span class="op">);</span></span>
+<span id="cb12-26"><a href="#cb12-26"></a>        <span class="kw">else</span></span>
+<span id="cb12-27"><a href="#cb12-27"></a>            renderer<span class="op">.</span><span class="fu">Draw</span><span class="op">(</span>sprite<span class="op">.</span><span class="fu">character</span><span class="op">,</span> physics<span class="op">.</span><span class="fu">position</span><span class="op">,</span> flip<span class="op">:</span> FlipAxis<span class="op">.</span><span class="fu">X</span><span class="op">);</span></span>
+<span id="cb12-28"><a href="#cb12-28"></a><span class="op">}</span></span>
+<span id="cb12-29"><a href="#cb12-29"></a></span>
+<span id="cb12-30"><a href="#cb12-30"></a><span class="dt">void</span> <span class="fu">UpdateAll</span><span class="op">(...)</span> <span class="op">{</span></span>
+<span id="cb12-31"><a href="#cb12-31"></a>    <span class="fu">PhysicsBodySystem</span><span class="op">(...);</span></span>
+<span id="cb12-32"><a href="#cb12-32"></a>    <span class="fu">CharacterInputSystem</span><span class="op">(...);</span></span>
+<span id="cb12-33"><a href="#cb12-33"></a>    <span class="fu">CharacterSpriteSystem</span><span class="op">(...);</span></span>
+<span id="cb12-34"><a href="#cb12-34"></a><span class="op">}</span></span></code></pre></div>
+</div>
+</div>
+</div>
+<div id="aos-vs-soa-vs-aosoa" class="slide section level2">
+<h1>AoS vs SoA vs AoSoA</h1>
+<div class="sourceCode" id="cb13"><pre class="sourceCode numberSource csharp number-lines"><code class="sourceCode cs"><span id="cb13-1"><a href="#cb13-1"></a><span class="co">// ------------------------------------------------------</span></span>
+<span id="cb13-2"><a href="#cb13-2"></a><span class="co">// Array of Structs</span></span>
+<span id="cb13-3"><a href="#cb13-3"></a><span class="co">// In memory you will have one stream of everything</span></span>
+<span id="cb13-4"><a href="#cb13-4"></a><span class="kw">struct</span> Player</span>
+<span id="cb13-5"><a href="#cb13-5"></a><span class="op">{</span></span>
+<span id="cb13-6"><a href="#cb13-6"></a>    Vector3 position<span class="op">;</span></span>
+<span id="cb13-7"><a href="#cb13-7"></a><span class="op">};</span></span>
+<span id="cb13-8"><a href="#cb13-8"></a></span>
+<span id="cb13-9"><a href="#cb13-9"></a><span class="kw">struct</span> WorldAoS</span>
+<span id="cb13-10"><a href="#cb13-10"></a><span class="op">{</span></span>
+<span id="cb13-11"><a href="#cb13-11"></a>    Player<span class="op">[]</span> players<span class="op">;</span></span>
+<span id="cb13-12"><a href="#cb13-12"></a><span class="op">};</span></span>
+<span id="cb13-13"><a href="#cb13-13"></a></span>
+<span id="cb13-14"><a href="#cb13-14"></a><span class="co">// ------------------------------------------------------</span></span>
+<span id="cb13-15"><a href="#cb13-15"></a><span class="co">// Struct of Arrays</span></span>
+<span id="cb13-16"><a href="#cb13-16"></a><span class="co">// In memory you will have one stream per component</span></span>
+<span id="cb13-17"><a href="#cb13-17"></a><span class="kw">struct</span> WorldSoA</span>
+<span id="cb13-18"><a href="#cb13-18"></a><span class="op">{</span></span>
+<span id="cb13-19"><a href="#cb13-19"></a>    <span class="dt">float</span><span class="op">[]</span> PlayerX<span class="op">;</span></span>
+<span id="cb13-20"><a href="#cb13-20"></a>    <span class="dt">float</span><span class="op">[]</span> PlayerY<span class="op">;</span></span>
+<span id="cb13-21"><a href="#cb13-21"></a>    <span class="dt">float</span><span class="op">[]</span> PlayerZ<span class="op">;</span></span>
+<span id="cb13-22"><a href="#cb13-22"></a><span class="op">}</span></span>
+<span id="cb13-23"><a href="#cb13-23"></a></span>
+<span id="cb13-24"><a href="#cb13-24"></a><span class="co">// ------------------------------------------------------</span></span>
+<span id="cb13-25"><a href="#cb13-25"></a><span class="co">// Arrays of Structs of Arrays</span></span>
+<span id="cb13-26"><a href="#cb13-26"></a><span class="co">// In memory you will have one stream per component</span></span>
+<span id="cb13-27"><a href="#cb13-27"></a><span class="kw">struct</span> WorldSoA</span>
+<span id="cb13-28"><a href="#cb13-28"></a><span class="op">{</span></span>
+<span id="cb13-29"><a href="#cb13-29"></a>    <span class="kw">unsafe</span> <span class="kw">fixed</span> <span class="dt">float</span> PlayerX<span class="op">[</span><span class="dv">64</span><span class="op">];</span></span>
+<span id="cb13-30"><a href="#cb13-30"></a>    <span class="kw">unsafe</span> <span class="kw">fixed</span> <span class="dt">float</span> PlayerY<span class="op">[</span><span class="dv">64</span><span class="op">];</span></span>
+<span id="cb13-31"><a href="#cb13-31"></a>    <span class="kw">unsafe</span> <span class="kw">fixed</span> <span class="dt">float</span> PlayerZ<span class="op">[</span><span class="dv">64</span><span class="op">];</span></span>
+<span id="cb13-32"><a href="#cb13-32"></a><span class="op">}</span></span>
+<span id="cb13-33"><a href="#cb13-33"></a></span>
+<span id="cb13-34"><a href="#cb13-34"></a><span class="kw">struct</span> WorldAoSoA</span>
+<span id="cb13-35"><a href="#cb13-35"></a><span class="op">{</span></span>
+<span id="cb13-36"><a href="#cb13-36"></a>    WorldSoA<span class="op">[]</span> arrays<span class="op">;</span></span>
+<span id="cb13-37"><a href="#cb13-37"></a><span class="op">}</span></span></code></pre></div>
+</div>
+<div id="no-magic" class="slide section level2">
+<h1>No magic</h1>
+<p>There is no fundamental complexity or magic to components, as a pattern it’s very straightforward.</p>
+<p>If you want you can even build your own EC/ECS framework and inject it to Unity via <code>UnityEngine.LowLevel.PlayerLoop.SetPlayerLoop(...)</code>.</p>
+<p>But the rest of ecosystem needs to use the same API’s, so to make editor, tools, etc to work nicely together.</p>
+<p>Hence having only one framework makes a lot of sense.</p>
 </div>
 
 <div id="self-study" class="title-slide slide section level1">
@@ -306,14 +477,31 @@ Patterns:
 <div id="self-study-1" class="slide section level2">
 <h1>Self study</h1>
 <ul>
-<li>What are the main categories of design patterns?</li>
-<li>What are the broader areas of responsibility in each category?</li>
-<li><a href="https://en.wikipedia.org/wiki/Software_design_pattern">Wiki: Software design pattern</a></li>
+<li><p>What is composition?</p></li>
+<li><p>What is aggregation? Hows it’s different from composition?</p></li>
+<li><p>What are main properties of composite pattern?</p></li>
+<li><p>What are components? And what are their main properties?</p></li>
+<li><p>What are the main complexities in EC and ECS?</p></li>
+<li><p><a href="https://en.wikipedia.org/wiki/Composite_pattern">Wiki: Composite pattern</a></p></li>
+<li><p><a href="http://gameprogrammingpatterns.com/component.html">Game Programming Patterns: Component</a></p></li>
 </ul>
-<p>Bonus:</p>
+<p>Extra:</p>
 <ul>
-<li>Lookup source code of <a href="https://github.com/TerryCavanagh/VVVVVV">VVVVVV</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Object_composition">https://en.wikipedia.org/wiki/Object_composition</a></li>
+<li><a href="https://chadaustin.me/2015/07/sum-types/">Sum types</a> / <a href="https://en.wikipedia.org/wiki/Tagged_union">https://en.wikipedia.org/wiki/Tagged_union</a></li>
 </ul>
+<p>Exercise:</p>
+<pre><code>Implement a character game object where:
+
+- Movement is controlled by it&#39;s own separate component script
+- Rendering (setting of armor/weapon/etc models) is controlled by separate script
+- Sound and other effects are controlled by component script
+
+Optionally:
+- Add an extra GameObject responsible for &quot;game character editor&quot;, e.g. something global
+- Add some generic UI buttons to it (OnGUI is ok) to change armor/weapon/etc or trigger effects, all by invoking methods on your own script components, rather than setting models from UI code.
+- Try also triggering sounds from movement (calling one component from another component)
+- Try doing the same but via Unity messages</code></pre>
 </div>
 </body>
 </html>

@@ -662,5 +662,4 @@ public class PotionTests {
 		Assert.That(profile.health, Is. ...);
 	}
 }
-
 ```

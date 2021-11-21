@@ -2,7 +2,7 @@ rule pandoc
   command = pandoc $
             -f markdown $
             -t slidy $
-            -s $
+            --self-contained $
             --slide-level=2 $
             --highlight-style pygments $
             -L "pandoc-lua-filters/filters/diagram-generator.lua" $
@@ -11,3 +11,6 @@ rule pandoc
             $in
 
 build 00_intro.html:                    pandoc markdown/00_intro.md
+build 01_singleton_and_di.html:         pandoc markdown/01_singleton_and_di.md
+build 02_components.html:               pandoc markdown/02_components.md
+build 03_state.html:                    pandoc markdown/03_state.md
