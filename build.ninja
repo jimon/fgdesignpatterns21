@@ -1,0 +1,13 @@
+rule pandoc
+  command = pandoc $
+            -f markdown $
+            -t slidy $
+            -s $
+            --slide-level=2 $
+            --highlight-style pygments $
+            -L "pandoc-lua-filters/filters/diagram-generator.lua" $
+            --extract-media=_graphics $
+            -o $out $
+            $in
+
+build 00_intro.html:                    pandoc markdown/00_intro.md

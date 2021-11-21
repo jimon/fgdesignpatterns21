@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <meta name="author" content="Dmytro Ivanov" />
+  <title>Introduction to Software Design Patterns</title>
+  <style type="text/css">
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <link rel="stylesheet" type="text/css" media="screen, projection, print"
+    href="https://www.w3.org/Talks/Tools/Slidy2/styles/slidy.css" />
+  <script src="https://www.w3.org/Talks/Tools/Slidy2/scripts/slidy.js"
+    charset="utf-8" type="text/javascript"></script>
+</head>
+<body>
+<div class="slide titlepage">
+  <h1 class="title">Introduction to Software Design Patterns</h1>
+  <p class="author">
+Dmytro Ivanov
+  </p>
+  <p class="date">Nov, 2021</p>
+</div>
+<div id="intro" class="title-slide slide section level1">
+<h1>Intro</h1>
+
+</div>
+<div id="little-about-me" class="slide section level2">
+<h1>Little about me</h1>
+<p>Dmytro</p>
+<p>Background:</p>
+<ul>
+<li>BS in Applied mathematics</li>
+<li>C/C++/C#/Python/Lua</li>
+<li>Engine / Systems / Low level</li>
+</ul>
+<p>Work:</p>
+<ul>
+<li>Unity</li>
+<li>Spotify</li>
+<li>King</li>
+</ul>
+<p>Interests:</p>
+<ul>
+<li>Electronics</li>
+<li>Sports: cycling, snowboarding, kayaking, etc</li>
+<li>A bit of flying</li>
+</ul>
+</div>
+<div id="course-goals" class="slide section level2">
+<h1>Course Goals</h1>
+<p>Go from “We don’t know what we don’t know” to “We know what we don’t know”.</p>
+<p>Learn new tools to solve problems.</p>
+<p>Understand the properties and the context behind the tools.</p>
+<p>Have fun :)</p>
+</div>
+<div id="course-structure" class="slide section level2">
+<h1>Course Structure</h1>
+<p>From Monday to Thursday inclusive:</p>
+<ul>
+<li>One or two lectures 10:30 - 12:30, small break in between.</li>
+<li>Mentoring / self study 13:30 - 15:30.</li>
+<li>Allocate some time for graded assignment, when you use a pattern for the first time it’s likely to take a few tries.</li>
+<li>On the last day of the course, let’s make “show &amp; tell” if you want, poke me if you’re interested in presenting.</li>
+</ul>
+<p>In general:</p>
+<ul>
+<li>If you have questions, stop me at any time.</li>
+<li>Focus on properties, not names. “I need something with properties X, Y, Z there was a pattern just like that somewhere” is a very good outcome.</li>
+<li>Some patterns are less distinct by nature, don’t worry about it.</li>
+<li>Good to discuss in groups to get different perspectives.</li>
+</ul>
+<p>All lectures will be available later on <a href="https://jimon.github.io/fgdesignpatterns21/">Github pages</a> or <a href="https://github.com/jimon/fgdesignpatterns21">Github repo</a>.</p>
+</div>
+<div id="graded-assignment" class="slide section level2">
+<h1>Graded assignment</h1>
+<h3 id="what">What</h3>
+<p>Make a game, where features are implement with help of patterns.</p>
+<p>Feature suggestion:</p>
+<ul>
+<li>Skill tree</li>
+<li>Inventory</li>
+<li>Store</li>
+<li>Crafting</li>
+<li>Power-ups / Buffs / etc</li>
+<li>Combos</li>
+<li>Notifications</li>
+<li>Achievements</li>
+<li>Interactive storytelling</li>
+<li>In-game editor</li>
+</ul>
+<p>Optionally, could be interesting to try to implement it as no-coding-required game systems. Meaning someone with no coding skills could use your crafting system to implement new crafting rules in your game.</p>
+<h3 id="grading">Grading</h3>
+<ul>
+<li>For Godkänt: Use minimum of 3 patterns in a context of game features.</li>
+<li>For Väl godkänt: Use minimum of 5 patterns in a context of game features.</li>
+</ul>
+</div>
+<div id="graded-assignment-details" class="slide section level2">
+<h1>Graded assignment details</h1>
+<h3 id="how">How</h3>
+<ul>
+<li>Use C# and Unity.
+<ul>
+<li>Good idea to use 2020.3.x or 2021.2.x.</li>
+</ul></li>
+<li>Add a readme.txt (or readme.md) in the root folder and write down:
+<ul>
+<li>Your name, what is the game about</li>
+<li>List of patterns used in the game, where they used (file name, class or method name), and a short explanation how they were used in the game.</li>
+</ul></li>
+</ul>
+<pre><code>Dmytro Ivanov
+A simple platform game with potions, item store and inventory.
+
+Patterns:
+- Singleton, in `InventoryManager.cs` in `class InventoryManager` as `InventoryManager.instance`
+  Used singleton to make the single instance of the class that could be accessed from anywhere.
+- ...</code></pre>
+<h3 id="submission">Submission</h3>
+<ul>
+<li>Upload your project or provide a URL to the repository.</li>
+<li>If you plan to upload, would be nice if you only archive the following folders and their contents: “Assets”, “Package”, “ProjectSettings”, and “readme.txt” file.</li>
+</ul>
+<h3 id="tips">Tips</h3>
+<ul>
+<li>Good idea to try refactoring tools in Rider / Visual Studio.</li>
+<li>Good idea to also use version control! :)</li>
+</ul>
+</div>
+<div id="what-is-a-software-design-pattern" class="slide section level2">
+<h1>What is a software design pattern</h1>
+<p>Per <a href="https://en.wikipedia.org/wiki/Software_design_pattern">Wiki</a>:</p>
+<blockquote>
+<p>A software design pattern is a general, reusable solution to a commonly occurring problem within a given context in software design.</p>
+</blockquote>
+<p>Per <a href="https://en.wikipedia.org/wiki/A_Pattern_Language">A Pattern Language</a> by Christopher Alexander (1977)</p>
+<blockquote>
+<p>Each pattern describes a problem which occurs over and over again in our environment and then describes the core of the solution to that problem, in such a way that you can use this solution a million times over, without ever doing it in the same way twice.</p>
+</blockquote>
+<p>Closely related concept: Programming idiom.</p>
+<p>Per <a href="http://wiki.c2.com/?ProgrammingIdiom">c2 wiki</a>:</p>
+<blockquote>
+<p>An idiom is a phrase that doesn’t make literal sense, but makes sense once you’re acquainted with the culture in which it arose.</p>
+</blockquote>
+</div>
+<div id="what-is-a-software-design-pattern-1" class="slide section level2">
+<h1>What is a software design pattern</h1>
+<p>Loosely grouped together:</p>
+<ul>
+<li>Problem statement</li>
+<li>Desired/expected properties</li>
+<li>“The key trick”</li>
+<li>Common implementations</li>
+</ul>
+<p>More of an art with happy little accidents.</p>
+</div>
+<div id="historical-context" class="slide section level2">
+<h1>Historical context</h1>
+<ul>
+<li><a href="http://rigaux.org/language-study/diagram-light.png">Lightweight genealogical tree</a></li>
+<li><a href="https://info.ucl.ac.be/~pvr/paradigmsDIAGRAMeng108.pdf">The principal programming paradigms</a></li>
+</ul>
+<p>Remark regarding patterns and DSL’s.</p>
+</div>
+<div id="design-patterns-usage-today" class="slide section level2">
+<h1>Design Patterns usage today</h1>
+<p>I think patterns got a secondary role today, and data flows / performance become primary concerns.</p>
+<p>We still use patterns to:</p>
+<ul>
+<li>Easier to split larger problem into smaller ones with known/standard solutions.</li>
+<li>Communicate with other devs via a more higher level language (concepts instead of code).</li>
+</ul>
+<p>Hence the architecture of modern application is more than just sum of design patterns.</p>
+<p>In daily work, most folks don’t use the names of patterns but rather talk about the properties (nobody is talking about memento but everyone talks about serialization).</p>
+</div>
+<div id="new-code-vs-old-code" class="slide section level2">
+<h1>New code vs old code</h1>
+<p>When writing new code, patterns can help speed up design phase.</p>
+<p>When refactoring old code, patterns can help standardize code.</p>
+</div>
+<div id="patterns-and-anti-patterns" class="slide section level2">
+<h1>Patterns and anti-patterns</h1>
+<p>Every pattern might have positive properties in one context and negative properties in another.</p>
+</div>
+<div id="overview" class="slide section level2">
+<h1>Overview</h1>
+<p>Most patterns can be categorized into 4 types:</p>
+<ul>
+<li>Creational</li>
+<li>Structural</li>
+<li>Behavioral</li>
+<li>Concurrency</li>
+</ul>
+</div>
+<div id="creational-patterns" class="slide section level2">
+<h1>Creational patterns</h1>
+<p>“Create an object for given data”:</p>
+<ul>
+<li>Builder</li>
+<li>Factory method</li>
+<li>Abstract factory</li>
+<li>Prototype</li>
+</ul>
+<p>“Manage object lifetime and initialization order for me”:</p>
+<ul>
+<li>Singleton</li>
+<li>Multiton</li>
+<li>Dependency injection</li>
+<li>Resource acquisition is initialization (RAII)</li>
+<li>Lazy initialization</li>
+<li>Object pool</li>
+</ul>
+</div>
+<div id="structural-patterns" class="slide section level2">
+<h1>Structural patterns</h1>
+<p>“I have these two things and I need them to fit together”:</p>
+<ul>
+<li>Adapter / Wrapper</li>
+<li>Bridge</li>
+<li>Decorator</li>
+<li>Proxy</li>
+</ul>
+<p>“I need a clean nice API to use”:</p>
+<ul>
+<li>Facade</li>
+<li>Front controller</li>
+</ul>
+<p>Others:</p>
+<ul>
+<li>Composite</li>
+<li>Flyweight</li>
+<li>Marker</li>
+<li>Module</li>
+</ul>
+</div>
+<div id="behavioral-patterns" class="slide section level2">
+<h1>Behavioral patterns</h1>
+<p>“I need to couple systems together”:</p>
+<ul>
+<li>Chain of responsibility</li>
+<li>Mediator</li>
+<li>Iterator</li>
+<li>Visitor</li>
+<li>Template method</li>
+<li>Observer</li>
+</ul>
+<p>“I need to represent state/objects/operations independent of particular instances”:</p>
+<ul>
+<li>Command</li>
+<li>Interpreter</li>
+<li>Memento</li>
+<li>Specification</li>
+<li>Strategy</li>
+<li>State</li>
+</ul>
+<p>“I need to encode behaviors when there is no object”:</p>
+<ul>
+<li>Null object</li>
+</ul>
+</div>
+<div id="idioms" class="slide section level2">
+<h1>Idioms</h1>
+<p>We will also cover a few gamedev specific idioms:</p>
+<ul>
+<li>Double buffer</li>
+<li>Dirty flag</li>
+<li>RAII</li>
+<li>Event queue</li>
+</ul>
+<p>And spend a bit of time talking about <a href="https://en.wikipedia.org/wiki/SOLID">SOLID</a> and others.</p>
+</div>
+<div id="concurrency-patterns" class="slide section level2">
+<h1>Concurrency patterns</h1>
+<p>Not covered in this class :(</p>
+<p>If you want to venture there, my advise would be to try bottom-up approach:</p>
+<p>What are we even trying to do:</p>
+<ul>
+<li>Context switch, CPU interrupts. There are no threads in hardware, it’s all illusion.</li>
+<li>“Memory Barriers: a Hardware View for Software Hackers” by Paul E. McKenney, 2009</li>
+<li>Leslie Lamport works: Sequential consistency, others.</li>
+<li>Parallel computing basics, map-reduce, SIMD/MIMD.</li>
+<li>Amdahl’s law and friends.</li>
+<li>Bonus: Virtual memory, page table, translation lookaside buffer (TLB). There is no memory allocation in hardware, it’s all illusion.</li>
+</ul>
+<p>The tools we have as software programmers:</p>
+<ul>
+<li>Threads.</li>
+<li>Semaphore, spinlock, read-write lock, etc.</li>
+<li>Condition variables, futex.</li>
+<li>Atomics and memory barriers.</li>
+<li>Read-copy-update.</li>
+</ul>
+</div>
+
+<div id="self-study" class="title-slide slide section level1">
+<h1>Self study</h1>
+
+</div>
+<div id="self-study-1" class="slide section level2">
+<h1>Self study</h1>
+<ul>
+<li>What are the main categories of design patterns?</li>
+<li>What are the broader areas of responsibility in each category?</li>
+<li><a href="https://en.wikipedia.org/wiki/Software_design_pattern">Wiki: Software design pattern</a></li>
+</ul>
+<p>Bonus:</p>
+<ul>
+<li>Lookup source code of <a href="https://github.com/TerryCavanagh/VVVVVV">VVVVVV</a></li>
+</ul>
+</div>
+</body>
+</html>

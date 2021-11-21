@@ -1,0 +1,697 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <meta name="author" content="Dmytro Ivanov" />
+  <title>Singleton and Dependency Injection</title>
+  <style type="text/css">
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <link rel="stylesheet" type="text/css" media="screen, projection, print"
+    href="https://www.w3.org/Talks/Tools/Slidy2/styles/slidy.css" />
+  <script src="https://www.w3.org/Talks/Tools/Slidy2/scripts/slidy.js"
+    charset="utf-8" type="text/javascript"></script>
+</head>
+<body>
+<div class="slide titlepage">
+  <h1 class="title">Singleton and Dependency Injection</h1>
+  <p class="author">
+Dmytro Ivanov
+  </p>
+  <p class="date">Nov, 2021</p>
+</div>
+<div id="inventing-the-problem" class="title-slide slide section level1">
+<h1>Inventing the problem</h1>
+
+</div>
+<div id="lets-start-with-the-basics" class="slide section level2">
+<h1>Let’s start with the basics</h1>
+<p>In C# 10 you could write:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode numberSource csharp number-lines"><code class="sourceCode cs"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw">using</span> System<span class="op">;</span></span>
+<span id="cb1-2"><a href="#cb1-2"></a></span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="dt">var</span> playerPosition <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb1-4"><a href="#cb1-4"></a></span>
+<span id="cb1-5"><a href="#cb1-5"></a><span class="kw">while</span> <span class="op">(</span><span class="kw">true</span><span class="op">)</span></span>
+<span id="cb1-6"><a href="#cb1-6"></a><span class="op">{</span></span>
+<span id="cb1-7"><a href="#cb1-7"></a>    <span class="dt">var</span> key <span class="op">=</span> Console<span class="op">.</span><span class="fu">ReadKey</span><span class="op">().</span><span class="fu">Key</span><span class="op">;</span></span>
+<span id="cb1-8"><a href="#cb1-8"></a></span>
+<span id="cb1-9"><a href="#cb1-9"></a>    <span class="kw">if</span> <span class="op">(</span>key <span class="op">==</span> ConsoleKey<span class="op">.</span><span class="fu">LeftArrow</span><span class="op">)</span>  playerPosition<span class="op">--;</span></span>
+<span id="cb1-10"><a href="#cb1-10"></a>    <span class="kw">if</span> <span class="op">(</span>key <span class="op">==</span> ConsoleKey<span class="op">.</span><span class="fu">RightArrow</span><span class="op">)</span> playerPosition<span class="op">++;</span></span>
+<span id="cb1-11"><a href="#cb1-11"></a></span>
+<span id="cb1-12"><a href="#cb1-12"></a>    Console<span class="op">.</span><span class="fu">WriteLine</span><span class="op">(</span>$<span class="st">&quot;position = {playerPosition}&quot;</span><span class="op">);</span></span>
+<span id="cb1-13"><a href="#cb1-13"></a><span class="op">}</span></span></code></pre></div>
+</div>
+<div id="lets-start-with-the-basics-1" class="slide section level2">
+<h1>Let’s start with the basics</h1>
+<p>Moving out character controller to a static class</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode numberSource csharp number-lines"><code class="sourceCode cs"><span id="cb2-1"><a href="#cb2-1"></a><span class="kw">using</span> System<span class="op">;</span></span>
+<span id="cb2-2"><a href="#cb2-2"></a></span>
+<span id="cb2-3"><a href="#cb2-3"></a><span class="kw">while</span> <span class="op">(</span><span class="kw">true</span><span class="op">)</span></span>
+<span id="cb2-4"><a href="#cb2-4"></a><span class="op">{</span></span>
+<span id="cb2-5"><a href="#cb2-5"></a>    <span class="dt">var</span> key <span class="op">=</span> Console<span class="op">.</span><span class="fu">ReadKey</span><span class="op">().</span><span class="fu">Key</span><span class="op">;</span></span>
+<span id="cb2-6"><a href="#cb2-6"></a></span>
+<span id="cb2-7"><a href="#cb2-7"></a>    <span class="kw">if</span> <span class="op">(</span>key <span class="op">==</span> ConsoleKey<span class="op">.</span><span class="fu">LeftArrow</span><span class="op">)</span>  Player<span class="op">.</span><span class="fu">MoveLeft</span><span class="op">();</span></span>
+<span id="cb2-8"><a href="#cb2-8"></a>    <span class="kw">if</span> <span class="op">(</span>key <span class="op">==</span> ConsoleKey<span class="op">.</span><span class="fu">RightArrow</span><span class="op">)</span> Player<span class="op">.</span><span class="fu">MoveRight</span><span class="op">();</span></span>
+<span id="cb2-9"><a href="#cb2-9"></a></span>
+<span id="cb2-10"><a href="#cb2-10"></a>    Console<span class="op">.</span><span class="fu">WriteLine</span><span class="op">(</span>$<span class="st">&quot;position = {Player.Position}&quot;</span><span class="op">);</span></span>
+<span id="cb2-11"><a href="#cb2-11"></a><span class="op">}</span></span>
+<span id="cb2-12"><a href="#cb2-12"></a></span>
+<span id="cb2-13"><a href="#cb2-13"></a><span class="kw">public</span> <span class="kw">static</span> <span class="kw">class</span> Player</span>
+<span id="cb2-14"><a href="#cb2-14"></a><span class="op">{</span></span>
+<span id="cb2-15"><a href="#cb2-15"></a>    <span class="kw">public</span> <span class="kw">static</span> <span class="dt">int</span> Position <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb2-16"><a href="#cb2-16"></a></span>
+<span id="cb2-17"><a href="#cb2-17"></a>    <span class="kw">public</span> <span class="kw">static</span> <span class="dt">void</span> <span class="fu">MoveLeft</span><span class="op">()</span>  <span class="op">{</span>Position<span class="op">--;}</span></span>
+<span id="cb2-18"><a href="#cb2-18"></a>    <span class="kw">public</span> <span class="kw">static</span> <span class="dt">void</span> <span class="fu">MoveRight</span><span class="op">()</span> <span class="op">{</span>Position<span class="op">++;}</span></span>
+<span id="cb2-19"><a href="#cb2-19"></a><span class="op">}</span></span></code></pre></div>
+</div>
+<div id="lets-start-with-the-basics-2" class="slide section level2">
+<h1>Let’s start with the basics</h1>
+<p>Adding one more field</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode numberSource csharp number-lines"><code class="sourceCode cs"><span id="cb3-1"><a href="#cb3-1"></a><span class="kw">using</span> System<span class="op">;</span></span>
+<span id="cb3-2"><a href="#cb3-2"></a></span>
+<span id="cb3-3"><a href="#cb3-3"></a><span class="kw">while</span> <span class="op">(</span><span class="kw">true</span><span class="op">)</span></span>
+<span id="cb3-4"><a href="#cb3-4"></a><span class="op">{</span></span>
+<span id="cb3-5"><a href="#cb3-5"></a>    <span class="dt">var</span> key <span class="op">=</span> Console<span class="op">.</span><span class="fu">ReadKey</span><span class="op">().</span><span class="fu">Key</span><span class="op">;</span></span>
+<span id="cb3-6"><a href="#cb3-6"></a></span>
+<span id="cb3-7"><a href="#cb3-7"></a>    <span class="kw">if</span> <span class="op">(</span>key <span class="op">==</span> ConsoleKey<span class="op">.</span><span class="fu">LeftArrow</span><span class="op">)</span>  Player<span class="op">.</span><span class="fu">MoveLeft</span><span class="op">();</span></span>
+<span id="cb3-8"><a href="#cb3-8"></a>    <span class="kw">if</span> <span class="op">(</span>key <span class="op">==</span> ConsoleKey<span class="op">.</span><span class="fu">RightArrow</span><span class="op">)</span> Player<span class="op">.</span><span class="fu">MoveRight</span><span class="op">();</span></span>
+<span id="cb3-9"><a href="#cb3-9"></a></span>
+<span id="cb3-10"><a href="#cb3-10"></a>    Console<span class="op">.</span><span class="fu">WriteLine</span><span class="op">(</span>$<span class="st">&quot;position = {Player.Position} weapon = {Player.Weapon}&quot;</span><span class="op">);</span></span>
+<span id="cb3-11"><a href="#cb3-11"></a><span class="op">}</span></span>
+<span id="cb3-12"><a href="#cb3-12"></a></span>
+<span id="cb3-13"><a href="#cb3-13"></a><span class="kw">public</span> <span class="kw">static</span> <span class="kw">class</span> Player</span>
+<span id="cb3-14"><a href="#cb3-14"></a><span class="op">{</span></span>
+<span id="cb3-15"><a href="#cb3-15"></a>    <span class="kw">public</span> <span class="kw">static</span> <span class="dt">int</span> Position <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb3-16"><a href="#cb3-16"></a>    <span class="kw">public</span> <span class="kw">static</span> <span class="dt">int</span> Weapon <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb3-17"><a href="#cb3-17"></a></span>
+<span id="cb3-18"><a href="#cb3-18"></a>    <span class="kw">public</span> <span class="kw">static</span> <span class="dt">void</span> <span class="fu">MoveLeft</span><span class="op">()</span>   <span class="op">{</span>Position<span class="op">--;}</span></span>
+<span id="cb3-19"><a href="#cb3-19"></a>    <span class="kw">public</span> <span class="kw">static</span> <span class="dt">void</span> <span class="fu">MoveRight</span><span class="op">()</span>  <span class="op">{</span>Position<span class="op">++;}</span></span>
+<span id="cb3-20"><a href="#cb3-20"></a>    <span class="kw">public</span> <span class="kw">static</span> <span class="dt">void</span> <span class="fu">NextWeapon</span><span class="op">()</span> <span class="op">{</span>Weapon <span class="op">=</span> <span class="op">(</span>Weapon <span class="op">+</span> <span class="dv">1</span><span class="op">)</span> <span class="op">%</span> <span class="dv">4</span><span class="op">;}</span></span>
+<span id="cb3-21"><a href="#cb3-21"></a><span class="op">}</span></span></code></pre></div>
+</div>
+<div id="lets-start-with-the-basics-3" class="slide section level2">
+<h1>Let’s start with the basics</h1>
+<p>Moving out to normal class with single instance. Render knows about character here.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode numberSource csharp number-lines"><code class="sourceCode cs"><span id="cb4-1"><a href="#cb4-1"></a><span class="dt">var</span> player <span class="op">=</span> <span class="kw">new</span> <span class="fu">Character</span><span class="op">();</span></span>
+<span id="cb4-2"><a href="#cb4-2"></a></span>
+<span id="cb4-3"><a href="#cb4-3"></a><span class="kw">while</span> <span class="op">(</span><span class="kw">true</span><span class="op">)</span></span>
+<span id="cb4-4"><a href="#cb4-4"></a><span class="op">{</span></span>
+<span id="cb4-5"><a href="#cb4-5"></a>    <span class="dt">var</span> key <span class="op">=</span> Console<span class="op">.</span><span class="fu">ReadKey</span><span class="op">().</span><span class="fu">Key</span><span class="op">;</span></span>
+<span id="cb4-6"><a href="#cb4-6"></a></span>
+<span id="cb4-7"><a href="#cb4-7"></a>    <span class="kw">if</span> <span class="op">(</span>key <span class="op">==</span> ConsoleKey<span class="op">.</span><span class="fu">LeftArrow</span><span class="op">)</span>  player<span class="op">.</span><span class="fu">MoveLeft</span><span class="op">();</span></span>
+<span id="cb4-8"><a href="#cb4-8"></a>    <span class="kw">if</span> <span class="op">(</span>key <span class="op">==</span> ConsoleKey<span class="op">.</span><span class="fu">RightArrow</span><span class="op">)</span> player<span class="op">.</span><span class="fu">MoveRight</span><span class="op">();</span></span>
+<span id="cb4-9"><a href="#cb4-9"></a>    <span class="kw">if</span> <span class="op">(</span>key <span class="op">==</span> ConsoleKey<span class="op">.</span><span class="fu">Spacebar</span><span class="op">)</span>   player<span class="op">.</span><span class="fu">NextWeapon</span><span class="op">();</span></span>
+<span id="cb4-10"><a href="#cb4-10"></a></span>
+<span id="cb4-11"><a href="#cb4-11"></a>    Render<span class="op">.</span><span class="fu">RenderCharacter</span><span class="op">(</span>player<span class="op">);</span></span>
+<span id="cb4-12"><a href="#cb4-12"></a><span class="op">}</span></span>
+<span id="cb4-13"><a href="#cb4-13"></a></span>
+<span id="cb4-14"><a href="#cb4-14"></a><span class="kw">public</span> <span class="kw">static</span> <span class="kw">class</span> Render</span>
+<span id="cb4-15"><a href="#cb4-15"></a><span class="op">{</span></span>
+<span id="cb4-16"><a href="#cb4-16"></a>    <span class="kw">public</span> <span class="kw">static</span> <span class="dt">void</span> <span class="fu">RenderCharacter</span><span class="op">(</span>Character character<span class="op">)</span></span>
+<span id="cb4-17"><a href="#cb4-17"></a>    <span class="op">{</span></span>
+<span id="cb4-18"><a href="#cb4-18"></a>        Console<span class="op">.</span><span class="fu">WriteLine</span><span class="op">(</span>$<span class="st">&quot;position = {character.Position} weapon = {character.Weapon}&quot;</span><span class="op">);</span></span>
+<span id="cb4-19"><a href="#cb4-19"></a>    <span class="op">}</span></span>
+<span id="cb4-20"><a href="#cb4-20"></a><span class="op">}</span></span>
+<span id="cb4-21"><a href="#cb4-21"></a></span>
+<span id="cb4-22"><a href="#cb4-22"></a><span class="kw">public</span> <span class="kw">class</span> Character</span>
+<span id="cb4-23"><a href="#cb4-23"></a><span class="op">{</span></span>
+<span id="cb4-24"><a href="#cb4-24"></a>    <span class="kw">public</span> <span class="dt">int</span> Position <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb4-25"><a href="#cb4-25"></a>    <span class="kw">public</span> <span class="dt">int</span> Weapon <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb4-26"><a href="#cb4-26"></a></span>
+<span id="cb4-27"><a href="#cb4-27"></a>    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">MoveLeft</span><span class="op">()</span>   <span class="op">{</span>Position<span class="op">--;}</span></span>
+<span id="cb4-28"><a href="#cb4-28"></a>    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">MoveRight</span><span class="op">()</span>  <span class="op">{</span>Position<span class="op">++;}</span></span>
+<span id="cb4-29"><a href="#cb4-29"></a>    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">NextWeapon</span><span class="op">()</span> <span class="op">{</span>Weapon <span class="op">=</span> <span class="op">(</span>Weapon <span class="op">+</span> <span class="dv">1</span><span class="op">)</span> <span class="op">%</span> <span class="dv">4</span><span class="op">;}</span></span>
+<span id="cb4-30"><a href="#cb4-30"></a><span class="op">}</span></span></code></pre></div>
+</div>
+<div id="the-root-of-the-problem-cross-systems-dependency" class="slide section level2">
+<h1>The root of the problem: Cross systems dependency</h1>
+<p>Let’s focus on render &lt;-&gt; character systems dependency. Render generally is a different subsystem to characters/NPC/AI/etc, and it shouldn’t really know about them much. Character should contain the knowledge via code, components, etc how it should be rendered. But now character doesn’t know the current instance of renderer.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode numberSource csharp number-lines"><code class="sourceCode cs"><span id="cb5-1"><a href="#cb5-1"></a><span class="kw">public</span> <span class="kw">class</span> Render</span>
+<span id="cb5-2"><a href="#cb5-2"></a><span class="op">{</span></span>
+<span id="cb5-3"><a href="#cb5-3"></a>    <span class="co">// Usually renderers need some sort of graphics context initialization.</span></span>
+<span id="cb5-4"><a href="#cb5-4"></a>    <span class="co">// Which needs to be executed before we call any graphics functions.</span></span>
+<span id="cb5-5"><a href="#cb5-5"></a>    <span class="kw">public</span> GfxContext Context <span class="op">=</span> <span class="op">...;</span></span>
+<span id="cb5-6"><a href="#cb5-6"></a>    <span class="kw">public</span> <span class="fu">Render</span><span class="op">()</span> <span class="op">{</span> <span class="op">...</span> <span class="op">}</span></span>
+<span id="cb5-7"><a href="#cb5-7"></a></span>
+<span id="cb5-8"><a href="#cb5-8"></a>    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">RenderSprite</span><span class="op">(</span>Sprite sprite<span class="op">,</span> <span class="dt">int</span> position<span class="op">)</span></span>
+<span id="cb5-9"><a href="#cb5-9"></a>    <span class="op">{</span></span>
+<span id="cb5-10"><a href="#cb5-10"></a>        <span class="op">...</span></span>
+<span id="cb5-11"><a href="#cb5-11"></a>    <span class="op">}</span></span>
+<span id="cb5-12"><a href="#cb5-12"></a><span class="op">}</span></span>
+<span id="cb5-13"><a href="#cb5-13"></a></span>
+<span id="cb5-14"><a href="#cb5-14"></a><span class="kw">public</span> <span class="kw">class</span> Character</span>
+<span id="cb5-15"><a href="#cb5-15"></a><span class="op">{</span></span>
+<span id="cb5-16"><a href="#cb5-16"></a>    <span class="op">...</span></span>
+<span id="cb5-17"><a href="#cb5-17"></a></span>
+<span id="cb5-18"><a href="#cb5-18"></a>    <span class="kw">public</span> Sprite Sprite <span class="op">=</span> <span class="op">...;</span></span>
+<span id="cb5-19"><a href="#cb5-19"></a></span>
+<span id="cb5-20"><a href="#cb5-20"></a>    <span class="op">...</span></span>
+<span id="cb5-21"><a href="#cb5-21"></a></span>
+<span id="cb5-22"><a href="#cb5-22"></a>    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">OnRender</span><span class="op">()</span></span>
+<span id="cb5-23"><a href="#cb5-23"></a>    <span class="op">{</span></span>
+<span id="cb5-24"><a href="#cb5-24"></a>        <span class="op">???.</span><span class="fu">RenderSprite</span><span class="op">(</span>Sprite<span class="op">,</span> <span class="op">...);</span></span>
+<span id="cb5-25"><a href="#cb5-25"></a>    <span class="op">}</span></span>
+<span id="cb5-26"><a href="#cb5-26"></a><span class="op">}</span></span></code></pre></div>
+<p>What are the options here?</p>
+</div>
+
+<div id="getting-to-the-solution" class="title-slide slide section level1">
+<h1>Getting to the solution</h1>
+
+</div>
+<div id="zero-one-infinity-rule" class="slide section level2">
+<h1>Zero one infinity rule</h1>
+<p>As per <a href="https://en.wikipedia.org/wiki/Zero_one_infinity_rule">Zero one infinity rule</a>:</p>
+<blockquote>
+<p>The Zero one infinity (ZOI) rule is a rule of thumb in software design proposed by early computing pioneer Willem van der Poel.</p>
+<p>Allow none of foo, one of foo, or any number of foo.</p>
+<p>The only reasonable numbers are zero, one and infinity.</p>
+<p>— Bruce J. MacLennan</p>
+</blockquote>
+<p>In practice allowing infinity of things is generally not useful, because you can quickly run out of memory, then what? In that case stream-processing is usually used: Kafka, Hadoop, etc, but it has non-zero overhead and is not practical for cases where you do fit in memory.</p>
+<p>What we care here, is zero&lt;-&gt;one part.</p>
+</div>
+<div id="the-singleton" class="slide section level2">
+<h1>The Singleton</h1>
+<blockquote>
+<p>The singleton pattern is a software design pattern that restricts the instantiation of a class to one “single” instance.</p>
+</blockquote>
+<div class="sourceCode" id="cb6"><pre class="sourceCode numberSource csharp number-lines"><code class="sourceCode cs"><span id="cb6-1"><a href="#cb6-1"></a><span class="kw">public</span> <span class="kw">class</span> Render</span>
+<span id="cb6-2"><a href="#cb6-2"></a><span class="op">{</span></span>
+<span id="cb6-3"><a href="#cb6-3"></a>    <span class="kw">public</span> GfxContext Context <span class="op">=</span> <span class="op">...;</span></span>
+<span id="cb6-4"><a href="#cb6-4"></a>    <span class="kw">private</span> <span class="fu">Render</span><span class="op">()</span> <span class="op">{</span> <span class="op">...</span> <span class="op">}</span> <span class="co">// constructor is private</span></span>
+<span id="cb6-5"><a href="#cb6-5"></a></span>
+<span id="cb6-6"><a href="#cb6-6"></a>    <span class="kw">public</span> <span class="kw">static</span> Render Instance <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> <span class="op">}</span> <span class="op">=</span> <span class="kw">new</span> <span class="fu">Render</span><span class="op">();</span></span>
+<span id="cb6-7"><a href="#cb6-7"></a></span>
+<span id="cb6-8"><a href="#cb6-8"></a>    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">RenderSprite</span><span class="op">(</span>Sprite sprite<span class="op">,</span> <span class="dt">int</span> position<span class="op">)</span></span>
+<span id="cb6-9"><a href="#cb6-9"></a>    <span class="op">{</span></span>
+<span id="cb6-10"><a href="#cb6-10"></a>        <span class="op">...</span></span>
+<span id="cb6-11"><a href="#cb6-11"></a>    <span class="op">}</span></span>
+<span id="cb6-12"><a href="#cb6-12"></a><span class="op">}</span></span>
+<span id="cb6-13"><a href="#cb6-13"></a></span>
+<span id="cb6-14"><a href="#cb6-14"></a><span class="kw">public</span> <span class="kw">class</span> Character</span>
+<span id="cb6-15"><a href="#cb6-15"></a><span class="op">{</span></span>
+<span id="cb6-16"><a href="#cb6-16"></a>    <span class="kw">public</span> Sprite Sprite <span class="op">=</span> <span class="op">...;</span></span>
+<span id="cb6-17"><a href="#cb6-17"></a></span>
+<span id="cb6-18"><a href="#cb6-18"></a>    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">OnRender</span><span class="op">()</span></span>
+<span id="cb6-19"><a href="#cb6-19"></a>    <span class="op">{</span></span>
+<span id="cb6-20"><a href="#cb6-20"></a>        Render<span class="op">.</span><span class="fu">Instance</span><span class="op">.</span><span class="fu">RenderSprite</span><span class="op">(</span>Sprite<span class="op">,</span> <span class="op">...);</span></span>
+<span id="cb6-21"><a href="#cb6-21"></a>    <span class="op">}</span></span>
+<span id="cb6-22"><a href="#cb6-22"></a><span class="op">}</span></span></code></pre></div>
+<p>Generally there is only one possible instance of renderer in the running application. Hence a singleton fits nicely here.</p>
+<p>Singleton can be considered an anti-pattern in some cases.</p>
+</div>
+<div id="dependency-injection" class="slide section level2">
+<h1>Dependency injection</h1>
+<p>A different way is to use <a href="https://en.wikipedia.org/wiki/Inversion_of_control">Inversion of control</a>, with dependency injection being one of them:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode numberSource csharp number-lines"><code class="sourceCode cs"><span id="cb7-1"><a href="#cb7-1"></a><span class="kw">public</span> <span class="kw">class</span> Render</span>
+<span id="cb7-2"><a href="#cb7-2"></a><span class="op">{</span></span>
+<span id="cb7-3"><a href="#cb7-3"></a>    <span class="kw">public</span> GfxContext Context <span class="op">=</span> <span class="op">...;</span></span>
+<span id="cb7-4"><a href="#cb7-4"></a>    <span class="kw">public</span> <span class="fu">Render</span><span class="op">()</span> <span class="op">{</span> <span class="op">...</span> <span class="op">}</span></span>
+<span id="cb7-5"><a href="#cb7-5"></a></span>
+<span id="cb7-6"><a href="#cb7-6"></a>    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">RenderSprite</span><span class="op">(</span>Sprite sprite<span class="op">,</span> <span class="dt">int</span> position<span class="op">)</span></span>
+<span id="cb7-7"><a href="#cb7-7"></a>    <span class="op">{</span></span>
+<span id="cb7-8"><a href="#cb7-8"></a>        <span class="op">...</span></span>
+<span id="cb7-9"><a href="#cb7-9"></a>    <span class="op">}</span></span>
+<span id="cb7-10"><a href="#cb7-10"></a><span class="op">}</span></span>
+<span id="cb7-11"><a href="#cb7-11"></a></span>
+<span id="cb7-12"><a href="#cb7-12"></a><span class="kw">public</span> <span class="kw">class</span> Character</span>
+<span id="cb7-13"><a href="#cb7-13"></a><span class="op">{</span></span>
+<span id="cb7-14"><a href="#cb7-14"></a>    <span class="kw">public</span> Render CurrentRender <span class="op">=</span> <span class="op">...;</span></span>
+<span id="cb7-15"><a href="#cb7-15"></a>    <span class="kw">public</span> Sprite Sprite <span class="op">=</span> <span class="op">...;</span></span>
+<span id="cb7-16"><a href="#cb7-16"></a></span>
+<span id="cb7-17"><a href="#cb7-17"></a>    <span class="kw">public</span> <span class="fu">Character</span><span class="op">(</span>Render render<span class="op">)</span></span>
+<span id="cb7-18"><a href="#cb7-18"></a>    <span class="op">{</span></span>
+<span id="cb7-19"><a href="#cb7-19"></a>        CurrentRender <span class="op">=</span> render<span class="op">;</span></span>
+<span id="cb7-20"><a href="#cb7-20"></a>    <span class="op">}</span></span>
+<span id="cb7-21"><a href="#cb7-21"></a></span>
+<span id="cb7-22"><a href="#cb7-22"></a>    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">OnRender</span><span class="op">()</span></span>
+<span id="cb7-23"><a href="#cb7-23"></a>    <span class="op">{</span></span>
+<span id="cb7-24"><a href="#cb7-24"></a>        CurrentRender<span class="op">.</span><span class="fu">RenderSprite</span><span class="op">(</span>Sprite<span class="op">,</span> <span class="op">...);</span></span>
+<span id="cb7-25"><a href="#cb7-25"></a>    <span class="op">}</span></span>
+<span id="cb7-26"><a href="#cb7-26"></a><span class="op">}</span></span></code></pre></div>
+<p>Hard to manage if you need many systems.</p>
+<p>What if current renderer changes?</p>
+<p>Dependency injection can be considered an anti-pattern in some cases. Wait, what? Both of them are bad!?</p>
+</div>
+<div id="one-or-two" class="slide section level2">
+<h1>One or two?</h1>
+<p>Sometimes one needs a test fixture. But when shipping the application, one would only see <code>RealRender</code>.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode numberSource csharp number-lines"><code class="sourceCode cs"><span id="cb8-1"><a href="#cb8-1"></a><span class="kw">public</span> <span class="kw">abstract</span> <span class="kw">class</span> IRender</span>
+<span id="cb8-2"><a href="#cb8-2"></a><span class="op">{</span></span>
+<span id="cb8-3"><a href="#cb8-3"></a>    <span class="kw">public</span> <span class="kw">static</span> IRender Instance <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> <span class="op">}</span> <span class="op">=</span> <span class="op">...;</span> <span class="co">// How to chose what to create?</span></span>
+<span id="cb8-4"><a href="#cb8-4"></a></span>
+<span id="cb8-5"><a href="#cb8-5"></a>    <span class="kw">public</span> <span class="kw">virtual</span> <span class="dt">void</span> <span class="fu">RenderSprite</span><span class="op">(</span>Sprite sprite<span class="op">,</span> <span class="dt">int</span> position<span class="op">)</span> <span class="op">{}</span></span>
+<span id="cb8-6"><a href="#cb8-6"></a><span class="op">}</span></span>
+<span id="cb8-7"><a href="#cb8-7"></a></span>
+<span id="cb8-8"><a href="#cb8-8"></a><span class="kw">public</span> <span class="kw">class</span> RealRender <span class="op">:</span> IRender</span>
+<span id="cb8-9"><a href="#cb8-9"></a><span class="op">{</span></span>
+<span id="cb8-10"><a href="#cb8-10"></a>    <span class="kw">public</span> <span class="kw">override</span> <span class="dt">void</span> <span class="fu">RenderSprite</span><span class="op">(</span>Sprite sprite<span class="op">,</span> <span class="dt">int</span> position<span class="op">)</span></span>
+<span id="cb8-11"><a href="#cb8-11"></a>    <span class="op">{</span></span>
+<span id="cb8-12"><a href="#cb8-12"></a>        <span class="op">...</span></span>
+<span id="cb8-13"><a href="#cb8-13"></a>    <span class="op">}</span></span>
+<span id="cb8-14"><a href="#cb8-14"></a><span class="op">}</span></span>
+<span id="cb8-15"><a href="#cb8-15"></a></span>
+<span id="cb8-16"><a href="#cb8-16"></a><span class="kw">public</span> <span class="kw">class</span> TestFixtureRender <span class="op">:</span> IRender</span>
+<span id="cb8-17"><a href="#cb8-17"></a><span class="op">{</span></span>
+<span id="cb8-18"><a href="#cb8-18"></a>    <span class="kw">public</span> <span class="kw">override</span> <span class="dt">void</span> <span class="fu">RenderSprite</span><span class="op">(</span>Sprite sprite<span class="op">,</span> <span class="dt">int</span> position<span class="op">)</span></span>
+<span id="cb8-19"><a href="#cb8-19"></a>    <span class="op">{</span></span>
+<span id="cb8-20"><a href="#cb8-20"></a>        <span class="op">...</span></span>
+<span id="cb8-21"><a href="#cb8-21"></a>    <span class="op">}</span></span>
+<span id="cb8-22"><a href="#cb8-22"></a><span class="op">}</span></span></code></pre></div>
+<p>Can be extended to <code>D3D12Render</code>, <code>VulkanRender</code>, etc.</p>
+</div>
+<div id="dependency-injection-and-tests" class="slide section level2">
+<h1>Dependency Injection and tests</h1>
+<p>Let’s say we have a player profile and tavern store:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode numberSource csharp number-lines"><code class="sourceCode cs"><span id="cb9-1"><a href="#cb9-1"></a><span class="co">// Can be an abstract class, or class with virtual methods, etc</span></span>
+<span id="cb9-2"><a href="#cb9-2"></a><span class="kw">public</span> <span class="kw">interface</span> IPlayerProfile</span>
+<span id="cb9-3"><a href="#cb9-3"></a><span class="op">{</span></span>
+<span id="cb9-4"><a href="#cb9-4"></a>    <span class="dt">bool</span> <span class="fu">SpendGems</span><span class="op">(</span><span class="dt">int</span> gems<span class="op">);</span></span>
+<span id="cb9-5"><a href="#cb9-5"></a><span class="op">}</span></span>
+<span id="cb9-6"><a href="#cb9-6"></a></span>
+<span id="cb9-7"><a href="#cb9-7"></a><span class="kw">public</span> <span class="kw">class</span> PlayerProfile <span class="op">:</span> IPlayerProfile</span>
+<span id="cb9-8"><a href="#cb9-8"></a><span class="op">{</span></span>
+<span id="cb9-9"><a href="#cb9-9"></a>    <span class="op">...</span></span>
+<span id="cb9-10"><a href="#cb9-10"></a><span class="op">}</span></span>
+<span id="cb9-11"><a href="#cb9-11"></a></span>
+<span id="cb9-12"><a href="#cb9-12"></a><span class="kw">public</span> <span class="kw">class</span> TavernStoreManager</span>
+<span id="cb9-13"><a href="#cb9-13"></a><span class="op">{</span></span>
+<span id="cb9-14"><a href="#cb9-14"></a>    <span class="kw">private</span> IPlayerProfile m_PlayerProfile<span class="op">;</span></span>
+<span id="cb9-15"><a href="#cb9-15"></a></span>
+<span id="cb9-16"><a href="#cb9-16"></a>    <span class="kw">public</span> <span class="fu">TavernStoreManager</span><span class="op">(</span>IPlayerProfile playerProfile<span class="op">)</span></span>
+<span id="cb9-17"><a href="#cb9-17"></a>    <span class="op">{</span></span>
+<span id="cb9-18"><a href="#cb9-18"></a>        m_PlayerProfile <span class="op">=</span> playerProfile<span class="op">;</span></span>
+<span id="cb9-19"><a href="#cb9-19"></a>    <span class="op">}</span></span>
+<span id="cb9-20"><a href="#cb9-20"></a></span>
+<span id="cb9-21"><a href="#cb9-21"></a>    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">BuyItem</span><span class="op">(...)</span></span>
+<span id="cb9-22"><a href="#cb9-22"></a>    <span class="op">{</span></span>
+<span id="cb9-23"><a href="#cb9-23"></a>        m_PlayerProfile<span class="op">.</span><span class="fu">SpendGems</span><span class="op">(...);</span></span>
+<span id="cb9-24"><a href="#cb9-24"></a>    <span class="op">}</span></span>
+<span id="cb9-25"><a href="#cb9-25"></a><span class="op">}</span></span></code></pre></div>
+</div>
+<div id="make-a-test-with-a-test-fixture-and-dependency-injection" class="slide section level2">
+<h1>Make a test with a test fixture and dependency injection</h1>
+<div class="sourceCode" id="cb10"><pre class="sourceCode numberSource csharp number-lines"><code class="sourceCode cs"><span id="cb10-1"><a href="#cb10-1"></a><span class="kw">public</span> <span class="kw">interface</span> IPlayerProfile</span>
+<span id="cb10-2"><a href="#cb10-2"></a><span class="op">{</span></span>
+<span id="cb10-3"><a href="#cb10-3"></a>    <span class="dt">bool</span> <span class="fu">SpendGems</span><span class="op">(...);</span></span>
+<span id="cb10-4"><a href="#cb10-4"></a><span class="op">}</span></span>
+<span id="cb10-5"><a href="#cb10-5"></a></span>
+<span id="cb10-6"><a href="#cb10-6"></a><span class="kw">public</span> <span class="kw">class</span> PlayerProfileMock <span class="op">:</span> IPlayerProfile</span>
+<span id="cb10-7"><a href="#cb10-7"></a><span class="op">{</span></span>
+<span id="cb10-8"><a href="#cb10-8"></a>    <span class="kw">public</span> <span class="dt">bool</span> SpendGemsWasCalled<span class="op">;</span></span>
+<span id="cb10-9"><a href="#cb10-9"></a>    <span class="kw">public</span> <span class="dt">int</span> TotalGemsSpent<span class="op">;</span></span>
+<span id="cb10-10"><a href="#cb10-10"></a>    <span class="dt">bool</span> <span class="fu">SpendGems</span><span class="op">(</span><span class="dt">int</span> gems<span class="op">)</span></span>
+<span id="cb10-11"><a href="#cb10-11"></a>    <span class="op">{</span></span>
+<span id="cb10-12"><a href="#cb10-12"></a>        SpendGemsWasCalled <span class="op">=</span> <span class="kw">true</span><span class="op">;</span></span>
+<span id="cb10-13"><a href="#cb10-13"></a>        TotalGemsSpent <span class="op">+=</span> gems<span class="op">;</span></span>
+<span id="cb10-14"><a href="#cb10-14"></a>        <span class="kw">return</span> <span class="kw">true</span><span class="op">;</span></span>
+<span id="cb10-15"><a href="#cb10-15"></a>    <span class="op">}</span></span>
+<span id="cb10-16"><a href="#cb10-16"></a><span class="op">}</span></span>
+<span id="cb10-17"><a href="#cb10-17"></a></span>
+<span id="cb10-18"><a href="#cb10-18"></a><span class="kw">public</span> <span class="kw">class</span> TavernStoreManager</span>
+<span id="cb10-19"><a href="#cb10-19"></a><span class="op">{</span></span>
+<span id="cb10-20"><a href="#cb10-20"></a>    <span class="op">...</span></span>
+<span id="cb10-21"><a href="#cb10-21"></a>    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">BuyItem</span><span class="op">(...)</span></span>
+<span id="cb10-22"><a href="#cb10-22"></a>    <span class="op">{</span></span>
+<span id="cb10-23"><a href="#cb10-23"></a>        m_PlayerProfile<span class="op">.</span><span class="fu">SpendGems</span><span class="op">(...);</span></span>
+<span id="cb10-24"><a href="#cb10-24"></a>    <span class="op">}</span></span>
+<span id="cb10-25"><a href="#cb10-25"></a><span class="op">}</span></span>
+<span id="cb10-26"><a href="#cb10-26"></a></span>
+<span id="cb10-27"><a href="#cb10-27"></a><span class="kw">public</span> <span class="kw">class</span> TavernStoreManagerTests</span>
+<span id="cb10-28"><a href="#cb10-28"></a><span class="op">{</span></span>
+<span id="cb10-29"><a href="#cb10-29"></a>    <span class="op">[</span>Test<span class="op">]</span></span>
+<span id="cb10-30"><a href="#cb10-30"></a>    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">BuyItem_CorrectlySpendsGems</span><span class="op">()</span></span>
+<span id="cb10-31"><a href="#cb10-31"></a>    <span class="op">{</span></span>
+<span id="cb10-32"><a href="#cb10-32"></a>        <span class="dt">var</span> mock <span class="op">=</span> <span class="fu">PlayerProfileMock</span><span class="op">();</span></span>
+<span id="cb10-33"><a href="#cb10-33"></a>        <span class="dt">var</span> tavern <span class="op">=</span> <span class="kw">new</span> <span class="fu">TavernStoreManager</span><span class="op">(</span>mock<span class="op">);</span></span>
+<span id="cb10-34"><a href="#cb10-34"></a>        tavern<span class="op">.</span><span class="fu">BuyItem</span><span class="op">(...);</span></span>
+<span id="cb10-35"><a href="#cb10-35"></a></span>
+<span id="cb10-36"><a href="#cb10-36"></a>        Assert<span class="op">.</span><span class="fu">That</span><span class="op">(</span>mock<span class="op">.</span><span class="fu">SpendGemsWasCalled</span><span class="op">,</span> Is<span class="op">.</span><span class="fu">True</span><span class="op">);</span> <span class="co">// think about order here</span></span>
+<span id="cb10-37"><a href="#cb10-37"></a>        Assert<span class="op">.</span><span class="fu">That</span><span class="op">(</span>mock<span class="op">.</span><span class="fu">TotalGemsSpent</span><span class="op">,</span>     Is<span class="op">.</span><span class="fu">EqualTo</span><span class="op">(</span><span class="dv">3</span><span class="op">));</span></span>
+<span id="cb10-38"><a href="#cb10-38"></a>    <span class="op">}</span></span>
+<span id="cb10-39"><a href="#cb10-39"></a><span class="op">}</span></span></code></pre></div>
+</div>
+
+<div id="performance" class="title-slide slide section level1">
+<h1>Performance</h1>
+
+</div>
+<div id="sidetrack-hot-path-cold-path" class="slide section level2">
+<h1>Sidetrack: hot path / cold path</h1>
+<ul>
+<li>Hot codepath - code execution paths in which most of the execution time is spent.</li>
+<li>Cold codepath - everything else.</li>
+</ul>
+<p>Sometimes one can hear “optimize the hot path”.</p>
+</div>
+<div id="performance-1" class="slide section level2">
+<h1>Performance</h1>
+<div class="sourceCode" id="cb11"><pre class="sourceCode numberSource csharp number-lines"><code class="sourceCode cs"><span id="cb11-1"><a href="#cb11-1"></a><span class="kw">public</span> <span class="kw">class</span> IRender</span>
+<span id="cb11-2"><a href="#cb11-2"></a><span class="op">{</span></span>
+<span id="cb11-3"><a href="#cb11-3"></a>    <span class="co">// One pointer indirection here</span></span>
+<span id="cb11-4"><a href="#cb11-4"></a>    <span class="kw">public</span> <span class="kw">static</span> Render Instance <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> <span class="op">}</span> <span class="op">=</span> <span class="op">...;</span></span>
+<span id="cb11-5"><a href="#cb11-5"></a></span>
+<span id="cb11-6"><a href="#cb11-6"></a>    <span class="co">// A virtual call here, which is 1-2 pointer indirections</span></span>
+<span id="cb11-7"><a href="#cb11-7"></a>    <span class="kw">public</span> <span class="kw">virtual</span> <span class="dt">void</span> <span class="fu">RenderSprite</span><span class="op">(</span>Sprite sprite<span class="op">,</span> <span class="dt">int</span> position<span class="op">)</span> <span class="op">{}</span></span>
+<span id="cb11-8"><a href="#cb11-8"></a><span class="op">}</span></span>
+<span id="cb11-9"><a href="#cb11-9"></a></span>
+<span id="cb11-10"><a href="#cb11-10"></a><span class="kw">public</span> <span class="kw">class</span> RealRender <span class="op">:</span> IRender</span>
+<span id="cb11-11"><a href="#cb11-11"></a><span class="op">{</span></span>
+<span id="cb11-12"><a href="#cb11-12"></a>    <span class="kw">public</span> <span class="kw">override</span> <span class="dt">void</span> <span class="fu">RenderSprite</span><span class="op">(</span>Sprite sprite<span class="op">,</span> <span class="dt">int</span> position<span class="op">)</span></span>
+<span id="cb11-13"><a href="#cb11-13"></a>    <span class="op">{</span></span>
+<span id="cb11-14"><a href="#cb11-14"></a>        <span class="op">...</span></span>
+<span id="cb11-15"><a href="#cb11-15"></a>    <span class="op">}</span></span>
+<span id="cb11-16"><a href="#cb11-16"></a><span class="op">}</span></span>
+<span id="cb11-17"><a href="#cb11-17"></a></span>
+<span id="cb11-18"><a href="#cb11-18"></a><span class="kw">public</span> <span class="kw">class</span> Character</span>
+<span id="cb11-19"><a href="#cb11-19"></a><span class="op">{</span></span>
+<span id="cb11-20"><a href="#cb11-20"></a>    <span class="kw">public</span> Sprite Sprite <span class="op">=</span> <span class="op">...;</span></span>
+<span id="cb11-21"><a href="#cb11-21"></a></span>
+<span id="cb11-22"><a href="#cb11-22"></a>    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">OnRender</span><span class="op">()</span> <span class="co">// Hot path</span></span>
+<span id="cb11-23"><a href="#cb11-23"></a>    <span class="op">{</span></span>
+<span id="cb11-24"><a href="#cb11-24"></a>        Render<span class="op">.</span><span class="fu">Instance</span><span class="op">.</span><span class="fu">RenderSprite</span><span class="op">(</span>Sprite<span class="op">,</span> <span class="op">...);</span></span>
+<span id="cb11-25"><a href="#cb11-25"></a>    <span class="op">}</span></span>
+<span id="cb11-26"><a href="#cb11-26"></a><span class="op">}</span></span></code></pre></div>
+<p>Now let’s say we have 1 million of characters to render, we just added 2-3 pointer indirections in runtime for no good reason. JIT could optimize them out though. Emphasis on <em>could</em>.</p>
+</div>
+<div id="performance-2" class="slide section level2">
+<h1>Performance</h1>
+<div class="sourceCode" id="cb12"><pre class="sourceCode numberSource csharp number-lines"><code class="sourceCode cs"><span id="cb12-1"><a href="#cb12-1"></a><span class="kw">public</span> <span class="kw">static</span> <span class="kw">class</span> Render</span>
+<span id="cb12-2"><a href="#cb12-2"></a><span class="op">{</span></span>
+<span id="cb12-3"><a href="#cb12-3"></a>    <span class="kw">private</span> <span class="kw">struct</span> InstanceData</span>
+<span id="cb12-4"><a href="#cb12-4"></a>    <span class="op">{</span></span>
+<span id="cb12-5"><a href="#cb12-5"></a>        <span class="kw">public</span> GfxContext context<span class="op">;</span> <span class="co">// should be value-type</span></span>
+<span id="cb12-6"><a href="#cb12-6"></a>    <span class="op">}</span></span>
+<span id="cb12-7"><a href="#cb12-7"></a></span>
+<span id="cb12-8"><a href="#cb12-8"></a>    <span class="co">// notice, this is a value-type</span></span>
+<span id="cb12-9"><a href="#cb12-9"></a>    <span class="co">// notice we group all static fields into one,</span></span>
+<span id="cb12-10"><a href="#cb12-10"></a>    <span class="co">// so we have one entry point to initialize/shutdown the subsystem</span></span>
+<span id="cb12-11"><a href="#cb12-11"></a>    <span class="kw">private</span> <span class="kw">static</span> InstanceData data <span class="op">=</span> <span class="op">...;</span></span>
+<span id="cb12-12"><a href="#cb12-12"></a></span>
+<span id="cb12-13"><a href="#cb12-13"></a>    <span class="co">// sometimes useful to ask to inline the method</span></span>
+<span id="cb12-14"><a href="#cb12-14"></a>    <span class="op">[</span><span class="fu">MethodImpl</span><span class="op">(</span>MethodImplOptions<span class="op">.</span><span class="fu">AggressiveInlining</span><span class="op">)]</span></span>
+<span id="cb12-15"><a href="#cb12-15"></a>    <span class="kw">public</span> <span class="kw">static</span> <span class="dt">void</span> <span class="fu">RenderSprite</span><span class="op">(</span>Sprite sprite<span class="op">,</span> <span class="dt">int</span> position<span class="op">)</span></span>
+<span id="cb12-16"><a href="#cb12-16"></a>    <span class="op">{</span></span>
+<span id="cb12-17"><a href="#cb12-17"></a>        <span class="co">// if data is null we&#39;re certain the system is not initialized</span></span>
+<span id="cb12-18"><a href="#cb12-18"></a>        <span class="co">// in contrast to just having bunch of static member fields</span></span>
+<span id="cb12-19"><a href="#cb12-19"></a>        <span class="co">// where it&#39;s hard to tell in which state the class is</span></span>
+<span id="cb12-20"><a href="#cb12-20"></a>    <span class="op">}</span></span>
+<span id="cb12-21"><a href="#cb12-21"></a><span class="op">}</span></span>
+<span id="cb12-22"><a href="#cb12-22"></a></span>
+<span id="cb12-23"><a href="#cb12-23"></a><span class="kw">public</span> <span class="kw">class</span> Character</span>
+<span id="cb12-24"><a href="#cb12-24"></a><span class="op">{</span></span>
+<span id="cb12-25"><a href="#cb12-25"></a>    <span class="kw">public</span> Sprite Sprite<span class="op">;</span></span>
+<span id="cb12-26"><a href="#cb12-26"></a></span>
+<span id="cb12-27"><a href="#cb12-27"></a>    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">OnRender</span><span class="op">()</span></span>
+<span id="cb12-28"><a href="#cb12-28"></a>    <span class="op">{</span></span>
+<span id="cb12-29"><a href="#cb12-29"></a>        Render<span class="op">.</span><span class="fu">RenderSprite</span><span class="op">(</span>Sprite<span class="op">,</span> <span class="dv">0</span><span class="op">);</span></span>
+<span id="cb12-30"><a href="#cb12-30"></a>    <span class="op">}</span></span>
+<span id="cb12-31"><a href="#cb12-31"></a><span class="op">}</span></span></code></pre></div>
+<p>This is not a singleton as per the classical definition. This is the same as original static renderer we discussed, the only difference is now all state is encapsulated in single static variable. This way we can easily do reset/restart/etc.</p>
+</div>
+
+<div id="gotchas" class="title-slide slide section level1">
+<h1>Gotchas</h1>
+
+</div>
+<div id="order-of-initialization-lazy-initialization-cycling-dependency" class="slide section level2">
+<h1>Order of initialization, lazy initialization, cycling dependency</h1>
+<div class="sourceCode" id="cb13"><pre class="sourceCode numberSource csharp number-lines"><code class="sourceCode cs"><span id="cb13-1"><a href="#cb13-1"></a><span class="kw">public</span> <span class="kw">class</span> SystemA</span>
+<span id="cb13-2"><a href="#cb13-2"></a><span class="op">{</span></span>
+<span id="cb13-3"><a href="#cb13-3"></a>    <span class="kw">private</span> <span class="fu">SystemA</span><span class="op">()</span></span>
+<span id="cb13-4"><a href="#cb13-4"></a>    <span class="op">{</span></span>
+<span id="cb13-5"><a href="#cb13-5"></a>        SystemB<span class="op">.</span><span class="fu">Instance</span><span class="op">.</span><span class="fu">Bar</span><span class="op">();</span></span>
+<span id="cb13-6"><a href="#cb13-6"></a>    <span class="op">}</span></span>
+<span id="cb13-7"><a href="#cb13-7"></a></span>
+<span id="cb13-8"><a href="#cb13-8"></a>    <span class="co">// lazy initialization</span></span>
+<span id="cb13-9"><a href="#cb13-9"></a>    <span class="kw">public</span> <span class="kw">static</span> SystemA Instance <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> <span class="op">}</span> <span class="op">=</span> <span class="kw">new</span> <span class="fu">SystemA</span><span class="op">();</span></span>
+<span id="cb13-10"><a href="#cb13-10"></a></span>
+<span id="cb13-11"><a href="#cb13-11"></a>    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">Foo</span><span class="op">()</span> <span class="op">{</span> <span class="op">}</span></span>
+<span id="cb13-12"><a href="#cb13-12"></a><span class="op">}</span></span>
+<span id="cb13-13"><a href="#cb13-13"></a></span>
+<span id="cb13-14"><a href="#cb13-14"></a><span class="kw">public</span> <span class="kw">class</span> SystemB</span>
+<span id="cb13-15"><a href="#cb13-15"></a><span class="op">{</span></span>
+<span id="cb13-16"><a href="#cb13-16"></a>    <span class="kw">private</span> <span class="fu">SystemB</span><span class="op">()</span></span>
+<span id="cb13-17"><a href="#cb13-17"></a>    <span class="op">{</span></span>
+<span id="cb13-18"><a href="#cb13-18"></a>        <span class="co">// Oooops, cycling dependency</span></span>
+<span id="cb13-19"><a href="#cb13-19"></a>        SystemA<span class="op">.</span><span class="fu">Instance</span><span class="op">.</span><span class="fu">Foo</span><span class="op">();</span></span>
+<span id="cb13-20"><a href="#cb13-20"></a>    <span class="op">}</span></span>
+<span id="cb13-21"><a href="#cb13-21"></a></span>
+<span id="cb13-22"><a href="#cb13-22"></a>    <span class="kw">public</span> <span class="kw">static</span> SystemB Instance <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> <span class="op">}</span> <span class="op">=</span> <span class="kw">new</span> <span class="fu">SystemB</span><span class="op">();</span></span>
+<span id="cb13-23"><a href="#cb13-23"></a></span>
+<span id="cb13-24"><a href="#cb13-24"></a>    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">Bar</span><span class="op">()</span> <span class="op">{</span> <span class="op">}</span></span>
+<span id="cb13-25"><a href="#cb13-25"></a><span class="op">}</span></span></code></pre></div>
+<p>In which order do systems start here?</p>
+<p>What if we have some external expectation about systems starting in specific order (audio, graphics, etc).</p>
+</div>
+<div id="order-of-initialization-lazy-initialization-cycling-dependency-1" class="slide section level2">
+<h1>Order of initialization, lazy initialization, cycling dependency</h1>
+<p>Generally production code tend to gravitate something like this:</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode numberSource csharp number-lines"><code class="sourceCode cs"><span id="cb14-1"><a href="#cb14-1"></a><span class="kw">internal</span> <span class="kw">class</span> SystemsManagerStartup <span class="op">{</span></span>
+<span id="cb14-2"><a href="#cb14-2"></a>    <span class="kw">internal</span> <span class="dt">void</span> <span class="fu">Startup</span><span class="op">()</span> <span class="op">{</span></span>
+<span id="cb14-3"><a href="#cb14-3"></a>        SystemA<span class="op">.</span><span class="fu">Startup</span><span class="op">();</span> <span class="co">// Somewhere in code explicit initialization sequence is codified</span></span>
+<span id="cb14-4"><a href="#cb14-4"></a>        SystemB<span class="op">.</span><span class="fu">Startup</span><span class="op">();</span></span>
+<span id="cb14-5"><a href="#cb14-5"></a>    <span class="op">}</span></span>
+<span id="cb14-6"><a href="#cb14-6"></a><span class="op">}</span></span>
+<span id="cb14-7"><a href="#cb14-7"></a></span>
+<span id="cb14-8"><a href="#cb14-8"></a><span class="kw">public</span> <span class="kw">class</span> SystemA</span>
+<span id="cb14-9"><a href="#cb14-9"></a><span class="op">{</span></span>
+<span id="cb14-10"><a href="#cb14-10"></a>    <span class="kw">public</span> <span class="kw">static</span> SystemA Instance <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> <span class="kw">private</span> <span class="kw">set</span><span class="op">;</span> <span class="op">}</span></span>
+<span id="cb14-11"><a href="#cb14-11"></a>    <span class="kw">internal</span> <span class="kw">static</span> <span class="dt">void</span> <span class="fu">Startup</span><span class="op">()</span> <span class="op">{</span></span>
+<span id="cb14-12"><a href="#cb14-12"></a>        Instance <span class="op">=</span> <span class="kw">new</span> <span class="fu">SystemA</span><span class="op">();</span></span>
+<span id="cb14-13"><a href="#cb14-13"></a>    <span class="op">}</span></span>
+<span id="cb14-14"><a href="#cb14-14"></a></span>
+<span id="cb14-15"><a href="#cb14-15"></a>    <span class="kw">private</span> <span class="fu">SystemA</span><span class="op">()</span> <span class="op">{</span></span>
+<span id="cb14-16"><a href="#cb14-16"></a>        Debug<span class="op">.</span><span class="fu">Assert</span><span class="op">(</span>SystemB<span class="op">.</span><span class="fu">Instance</span> <span class="op">!=</span> <span class="kw">null</span><span class="op">);</span></span>
+<span id="cb14-17"><a href="#cb14-17"></a>        SystemB<span class="op">.</span><span class="fu">Instance</span><span class="op">.</span><span class="fu">Bar</span><span class="op">();</span></span>
+<span id="cb14-18"><a href="#cb14-18"></a>    <span class="op">}</span></span>
+<span id="cb14-19"><a href="#cb14-19"></a></span>
+<span id="cb14-20"><a href="#cb14-20"></a>    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">Foo</span><span class="op">()</span> <span class="op">{</span> <span class="op">}</span></span>
+<span id="cb14-21"><a href="#cb14-21"></a><span class="op">}</span></span>
+<span id="cb14-22"><a href="#cb14-22"></a></span>
+<span id="cb14-23"><a href="#cb14-23"></a><span class="kw">public</span> <span class="kw">class</span> SystemB</span>
+<span id="cb14-24"><a href="#cb14-24"></a><span class="op">{</span></span>
+<span id="cb14-25"><a href="#cb14-25"></a>    <span class="kw">public</span> <span class="kw">static</span> SystemB Instance <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> <span class="kw">private</span> <span class="kw">set</span><span class="op">;</span> <span class="op">}</span></span>
+<span id="cb14-26"><a href="#cb14-26"></a>    <span class="kw">internal</span> <span class="kw">static</span> <span class="dt">void</span> <span class="fu">Startup</span><span class="op">()</span> <span class="op">{</span></span>
+<span id="cb14-27"><a href="#cb14-27"></a>        Instance <span class="op">=</span> <span class="kw">new</span> <span class="fu">SystemB</span><span class="op">();</span></span>
+<span id="cb14-28"><a href="#cb14-28"></a>    <span class="op">}</span></span>
+<span id="cb14-29"><a href="#cb14-29"></a></span>
+<span id="cb14-30"><a href="#cb14-30"></a>    <span class="kw">private</span> <span class="fu">SystemB</span><span class="op">()</span> <span class="op">{</span></span>
+<span id="cb14-31"><a href="#cb14-31"></a>        Debug<span class="op">.</span><span class="fu">Assert</span><span class="op">(</span>SystemA<span class="op">.</span><span class="fu">Instance</span> <span class="op">!=</span> <span class="kw">null</span><span class="op">);</span></span>
+<span id="cb14-32"><a href="#cb14-32"></a>        SystemA<span class="op">.</span><span class="fu">Instance</span><span class="op">.</span><span class="fu">Foo</span><span class="op">();</span> <span class="co">// Check with startup manager</span></span>
+<span id="cb14-33"><a href="#cb14-33"></a>    <span class="op">}</span></span>
+<span id="cb14-34"><a href="#cb14-34"></a></span>
+<span id="cb14-35"><a href="#cb14-35"></a>    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">Bar</span><span class="op">()</span> <span class="op">{</span> <span class="op">}</span></span>
+<span id="cb14-36"><a href="#cb14-36"></a><span class="op">}</span></span></code></pre></div>
+</div>
+
+<div id="unity" class="title-slide slide section level1">
+<h1>Unity</h1>
+
+</div>
+<div id="singleton-in-unity-via-gameobject-in-the-scene" class="slide section level2">
+<h1>Singleton in Unity: via GameObject in the scene</h1>
+<div class="sourceCode" id="cb15"><pre class="sourceCode numberSource csharp number-lines"><code class="sourceCode cs"><span id="cb15-1"><a href="#cb15-1"></a><span class="kw">class</span> Singleton <span class="op">:</span> MonoBehaviour</span>
+<span id="cb15-2"><a href="#cb15-2"></a><span class="op">{</span></span>
+<span id="cb15-3"><a href="#cb15-3"></a>    <span class="kw">public</span> <span class="kw">static</span> Singleton Instance <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> <span class="kw">private</span> <span class="kw">set</span><span class="op">;</span> <span class="op">}</span></span>
+<span id="cb15-4"><a href="#cb15-4"></a></span>
+<span id="cb15-5"><a href="#cb15-5"></a>    <span class="kw">private</span> <span class="dt">void</span> <span class="fu">Awake</span><span class="op">()</span></span>
+<span id="cb15-6"><a href="#cb15-6"></a>    <span class="op">{</span></span>
+<span id="cb15-7"><a href="#cb15-7"></a>        <span class="kw">if</span> <span class="op">(</span>Instance <span class="op">!=</span> <span class="kw">null</span> <span class="op">&amp;&amp;</span> Instance <span class="op">!=</span> <span class="kw">this</span><span class="op">)</span></span>
+<span id="cb15-8"><a href="#cb15-8"></a>            <span class="fu">Destroy</span><span class="op">(</span><span class="kw">this</span><span class="op">.</span><span class="fu">gameObject</span><span class="op">);</span> <span class="co">// Mmm, but why we have two instances to begin with?</span></span>
+<span id="cb15-9"><a href="#cb15-9"></a>        <span class="kw">else</span></span>
+<span id="cb15-10"><a href="#cb15-10"></a>            Instance <span class="op">=</span> <span class="kw">this</span><span class="op">;</span></span>
+<span id="cb15-11"><a href="#cb15-11"></a>    <span class="op">}</span></span>
+<span id="cb15-12"><a href="#cb15-12"></a><span class="op">}</span></span></code></pre></div>
+<p>Means you need to create a GameObject in the scene manually and attach the script to it.</p>
+<p>Beware of prefabs: if you have singletons inside prefabs, more than one prefab instance can be spawned.</p>
+<p>The most famous problem is two instances of <code>EventSystem</code> historically rising the warning.</p>
+<p>One way to tackle this is to have a prefab of game systems, and then manually control that you only have one instance of it in the scene.</p>
+</div>
+<div id="singleton-in-unity-self-initializing" class="slide section level2">
+<h1>Singleton in Unity: self initializing</h1>
+<div class="sourceCode" id="cb16"><pre class="sourceCode numberSource csharp number-lines"><code class="sourceCode cs"><span id="cb16-1"><a href="#cb16-1"></a><span class="kw">#if</span> UNITY_EDITOR</span>
+<span id="cb16-2"><a href="#cb16-2"></a><span class="op">[</span>UnityEditor<span class="op">.</span><span class="fu">InitializeOnLoad</span><span class="op">]</span></span>
+<span id="cb16-3"><a href="#cb16-3"></a><span class="kw">#endif</span></span>
+<span id="cb16-4"><a href="#cb16-4"></a><span class="kw">class</span> Singleton</span>
+<span id="cb16-5"><a href="#cb16-5"></a><span class="op">{</span></span>
+<span id="cb16-6"><a href="#cb16-6"></a>    <span class="kw">public</span> <span class="kw">static</span> Singleton Instance <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> <span class="kw">private</span> <span class="kw">set</span><span class="op">;</span> <span class="op">}</span></span>
+<span id="cb16-7"><a href="#cb16-7"></a></span>
+<span id="cb16-8"><a href="#cb16-8"></a>    <span class="kw">#if</span> UNITY_EDITOR</span>
+<span id="cb16-9"><a href="#cb16-9"></a>    <span class="kw">static</span> <span class="fu">AlwaysInitializedBehaviour</span><span class="op">()</span> <span class="op">{</span></span>
+<span id="cb16-10"><a href="#cb16-10"></a>        <span class="fu">Initialize</span><span class="op">();</span></span>
+<span id="cb16-11"><a href="#cb16-11"></a>    <span class="op">}</span></span>
+<span id="cb16-12"><a href="#cb16-12"></a>    <span class="kw">#endif</span></span>
+<span id="cb16-13"><a href="#cb16-13"></a></span>
+<span id="cb16-14"><a href="#cb16-14"></a>    <span class="kw">#if</span> UNITY_STANDALONE</span>
+<span id="cb16-15"><a href="#cb16-15"></a>    <span class="co">// Gotcha, this is called after Awake!</span></span>
+<span id="cb16-16"><a href="#cb16-16"></a>    <span class="op">[</span><span class="fu">RuntimeInitializeOnLoadMethod</span><span class="op">(</span>RuntimeInitializeLoadType<span class="op">.</span><span class="fu">BeforeSceneLoad</span><span class="op">)]</span></span>
+<span id="cb16-17"><a href="#cb16-17"></a>    <span class="kw">#endif</span></span>
+<span id="cb16-18"><a href="#cb16-18"></a>    <span class="kw">static</span> <span class="dt">void</span> <span class="fu">Initialize</span><span class="op">()</span></span>
+<span id="cb16-19"><a href="#cb16-19"></a>    <span class="op">{</span></span>
+<span id="cb16-20"><a href="#cb16-20"></a>        <span class="fu">Initialize</span><span class="op">()</span></span>
+<span id="cb16-21"><a href="#cb16-21"></a>        Instance <span class="op">=</span> <span class="kw">new</span> <span class="fu">Singleton</span><span class="op">();</span></span>
+<span id="cb16-22"><a href="#cb16-22"></a>    <span class="op">}</span></span>
+<span id="cb16-23"><a href="#cb16-23"></a><span class="op">}</span></span></code></pre></div>
+<p>See <a href="https://docs.unity3d.com/Manual/ExecutionOrder.html">Unity docs on Execution Order</a></p>
+<p>In worst case you could create a bootstrap scene where you create everything, and then jump to a real scene.</p>
+</div>
+<div id="dependency-injection-in-unity-via-serialization-editor" class="slide section level2">
+<h1>Dependency injection in Unity: via serialization / editor</h1>
+<div class="sourceCode" id="cb17"><pre class="sourceCode numberSource csharp number-lines"><code class="sourceCode cs"><span id="cb17-1"><a href="#cb17-1"></a><span class="kw">public</span> <span class="kw">class</span> Foo <span class="op">:</span> MonoBehaviour</span>
+<span id="cb17-2"><a href="#cb17-2"></a><span class="op">{</span></span>
+<span id="cb17-3"><a href="#cb17-3"></a>    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">DoFoo</span><span class="op">()</span> <span class="op">{</span> <span class="op">}</span></span>
+<span id="cb17-4"><a href="#cb17-4"></a><span class="op">}</span></span>
+<span id="cb17-5"><a href="#cb17-5"></a></span>
+<span id="cb17-6"><a href="#cb17-6"></a><span class="kw">public</span> <span class="kw">class</span> Bar <span class="op">:</span> MonoBehaviour</span>
+<span id="cb17-7"><a href="#cb17-7"></a><span class="op">{</span></span>
+<span id="cb17-8"><a href="#cb17-8"></a>    <span class="co">// serialized property, can select instance of Foo in the editor</span></span>
+<span id="cb17-9"><a href="#cb17-9"></a>    <span class="kw">public</span> Foo Foo<span class="op">;</span></span>
+<span id="cb17-10"><a href="#cb17-10"></a></span>
+<span id="cb17-11"><a href="#cb17-11"></a>    <span class="dt">void</span> <span class="fu">Update</span><span class="op">()</span></span>
+<span id="cb17-12"><a href="#cb17-12"></a>    <span class="op">{</span></span>
+<span id="cb17-13"><a href="#cb17-13"></a>        Foo<span class="op">.</span><span class="fu">DoFoo</span><span class="op">();</span></span>
+<span id="cb17-14"><a href="#cb17-14"></a>    <span class="op">}</span></span>
+<span id="cb17-15"><a href="#cb17-15"></a><span class="op">}</span></span></code></pre></div>
+</div>
+<div id="dependency-injection-in-unity-via-zenject" class="slide section level2">
+<h1>Dependency injection in Unity: via Zenject</h1>
+<p><a href="https://github.com/modesttree/Zenject">Zenject</a></p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode numberSource csharp number-lines"><code class="sourceCode cs"><span id="cb18-1"><a href="#cb18-1"></a><span class="kw">public</span> <span class="kw">class</span> Foo</span>
+<span id="cb18-2"><a href="#cb18-2"></a><span class="op">{</span></span>
+<span id="cb18-3"><a href="#cb18-3"></a>    IBar _bar<span class="op">;</span></span>
+<span id="cb18-4"><a href="#cb18-4"></a></span>
+<span id="cb18-5"><a href="#cb18-5"></a>    <span class="kw">public</span> <span class="fu">Foo</span><span class="op">(</span>IBar bar<span class="op">)</span></span>
+<span id="cb18-6"><a href="#cb18-6"></a>    <span class="op">{</span></span>
+<span id="cb18-7"><a href="#cb18-7"></a>        _bar <span class="op">=</span> bar<span class="op">;</span></span>
+<span id="cb18-8"><a href="#cb18-8"></a>    <span class="op">}</span></span>
+<span id="cb18-9"><a href="#cb18-9"></a><span class="op">}</span></span>
+<span id="cb18-10"><a href="#cb18-10"></a></span>
+<span id="cb18-11"><a href="#cb18-11"></a><span class="kw">public</span> <span class="kw">interface</span> IBar <span class="op">{}</span></span>
+<span id="cb18-12"><a href="#cb18-12"></a><span class="kw">public</span> <span class="kw">class</span> Bar <span class="op">:</span> IBar <span class="op">{}</span></span>
+<span id="cb18-13"><a href="#cb18-13"></a></span>
+<span id="cb18-14"><a href="#cb18-14"></a><span class="kw">public</span> <span class="kw">class</span> TestInstaller <span class="op">:</span> MonoInstaller</span>
+<span id="cb18-15"><a href="#cb18-15"></a><span class="op">{</span></span>
+<span id="cb18-16"><a href="#cb18-16"></a>    <span class="kw">public</span> <span class="kw">override</span> <span class="dt">void</span> <span class="fu">InstallBindings</span><span class="op">()</span></span>
+<span id="cb18-17"><a href="#cb18-17"></a>    <span class="op">{</span></span>
+<span id="cb18-18"><a href="#cb18-18"></a>        Container<span class="op">.</span><span class="fu">Bind</span><span class="op">&lt;</span>Foo<span class="op">&gt;().</span><span class="fu">AsSingle</span><span class="op">();</span></span>
+<span id="cb18-19"><a href="#cb18-19"></a>        Container<span class="op">.</span><span class="fu">Bind</span><span class="op">&lt;</span>IBar<span class="op">&gt;().</span><span class="fu">To</span><span class="op">&lt;</span>Bar<span class="op">&gt;().</span><span class="fu">AsSingle</span><span class="op">();</span></span>
+<span id="cb18-20"><a href="#cb18-20"></a>    <span class="op">}</span></span>
+<span id="cb18-21"><a href="#cb18-21"></a><span class="op">}</span></span></code></pre></div>
+</div>
+
+<div id="self-study" class="title-slide slide section level1">
+<h1>Self study</h1>
+
+</div>
+<div id="self-study-1" class="slide section level2">
+<h1>Self study</h1>
+<ul>
+<li>What are the main properties or a singleton?</li>
+<li>What are the main properties of dependency injection?</li>
+<li>What are pros/cons of a singleton?</li>
+<li>What are pros/cons of dependency injection?</li>
+<li>Why singletons and dependency injection might be slow?</li>
+<li>Is singleton a thread safe pattern?</li>
+<li><a href="http://gameprogrammingpatterns.com/singleton.html">Game Programming Patterns: Singleton</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Singleton_pattern">Wiki: Singleton pattern</a></li>
+<li><a href="http://wiki.c2.com/?SingletonPattern">C2: Singleton pattern</a></li>
+</ul>
+<p>Exercise:</p>
+<pre><code>Player profile, UI and Potion
+
+Implement as singleton and also as dependency injection:
+
+- A player profile class that contains health value (0-100)
+- A UI rendering GameObject with `void OnGUI()` and render a text label showing current amount of health
+- A potion class that adds some health to the profile
+
+Optional, try to implement a test that ensures potion actually does increment health value with com.unity.test-framework
+
+public class PotionTests {
+    [Test]
+    public void Potion_CanIncrementHealth() {
+        var profile = ...;
+        var potion = ...;
+        potion.Use();
+        Assert.That(profile.health, Is. ...);
+    }
+}
+</code></pre>
+</div>
+</body>
+</html>

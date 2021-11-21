@@ -1,0 +1,22 @@
+---
+layout: default
+---
+
+Lectures:
+
+- [Intro](00_intro.html)
+- [Singleton and Dependency Injection](01_singleton_and_di.html)
+- Composition, Composite, Components
+- State and state machine
+- Observer pattern, Stale state, Single source of truth
+- RAII
+- Facade, Adapter, Bridge, Proxy, Decorator
+- Memento, Visitor
+- Interpreter
+- Flyweight, Pool
+- Builder, Factory, Prototype
+- Specification
+- Double buffering
+- Dirty flag
+- Event queue
+- SOLID and other principles
