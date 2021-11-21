@@ -19,4 +19,4 @@ Lectures:
 - [Double buffering](e0_double_buffer.html)
 - [Dirty flag](e1_dirty_flag.html)
 - Event queue
-- SOLID and other principles
+- [SOLID and other principles](e2_solid.html)
