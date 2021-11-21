@@ -1,4 +1,4 @@
 title: Software Design Patterns
-description: For Future Games 2021 course
+description: For Futuregames 2021 course
 theme: jekyll-theme-tactile
 exclude: [markdown, pandoc-lua-filters, build.ninja]

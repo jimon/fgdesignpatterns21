@@ -16,7 +16,7 @@ Lectures:
 - Flyweight, Pool
 - Builder, Factory, Prototype
 - Specification
-- Double buffering
-- Dirty flag
+- [Double buffering](e0_double_buffer.html)
+- [Dirty flag](e1_dirty_flag.html)
 - Event queue
 - SOLID and other principles
