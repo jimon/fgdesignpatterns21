@@ -92,11 +92,11 @@ class NetworkConnectionConnectedState : NetworkConnectionState {
 
 ## Automata theory
 
-- Theoretical computer science.
-- Well defined.
-- Formal.
-- Works.
-- Most of what we do in programming can be observed through lens of automata theory and reasoned with formal tools.
+- Theoretical computer science
+- Well defined
+- Formal
+- Works
+- Most of what we do in programming can be observed through lens of automata theory and reasoned with formal tools
 
 # Deterministic finite-state machine (DFA)
 
@@ -159,6 +159,7 @@ class Turnstile {
 		{
 		case Event.Paid:
 			switch (_state) {
+				// notice we can also just call some other function here
 				case State.DoorClosed: _state = State.DoorOpen; break;
 			}
 			break;
@@ -224,6 +225,27 @@ class Turnstile {
 ```
 
 Code is data? Data is code?
+
+## Generating events on edges
+
+We can also create events during transitions (graph edges).
+
+```graphviz
+digraph G {
+	closed [label = "Doors closed"];
+	waiting_open [label = "Waiting for doors to open"]
+	open [label = "Doors open"];
+	waiting_closed [label = "Waiting for doors to close"]
+
+	closed -> waiting_open [label = "When paid,\nstart the motors\nto open the door"];
+	waiting_open -> open [label = "When sensed doors are open,\nstop the motors"];
+	open -> waiting_closed [label = "When sensed passed through,\nstart the motors\nto close the door"];
+	waiting_closed -> closed [label = "When sensed doors are closed,\nstop the motors"];
+
+	default [label = "", shape = none, height = 0, width = 0];
+	default -> closed [label = "Default"];
+}
+```
 
 # Hierarchical finite-state machine (HFSM)
 
@@ -472,7 +494,7 @@ Try it out with [Graphviz Online](https://dreampuf.github.io/GraphvizOnline/).
 
 ## Graphviz example: basics
 
-```dot
+```{.dot .number-lines}
 digraph GraphName {
 	a; b;
 	a -> b;
@@ -486,7 +508,7 @@ digraph GraphName {
 }
 ```
 
-```dot
+```{.dot .number-lines}
 graph GraphName {
 	a; b;
 	a -- b;
@@ -502,7 +524,7 @@ graph GraphName {
 
 ## Graphviz example: labels and more
 
-```dot
+```{.dot .number-lines}
 digraph G {
 	rankdir=LR;
 
@@ -524,7 +546,7 @@ digraph G {
 
 ## Graphviz example: subgraph
 
-```dot
+```{.dot .number-lines}
 digraph G {
 	compound=true;
 	newrank=true;
@@ -586,11 +608,13 @@ Bonus:
 
 Exercise:
 ```
-Implement a character with states forming a DFA, where nodes are standing, walking, jumping, crouch, attack, etc and events are keyboard inputs and animation endings.
+Implement a character class with states forming a DFA. Where nodes are character states like standing, walking, jumping, crouch, attack, etc and events are keyboard inputs, animation endings, etc.
 
 - Model the state graph on paper (optionally, try graphviz online).
 - Implement DFA as nested switch-cases.
 - Implement DFA as LUT.
+
+In pairs or groups, discuss each others state machines, try to see if they are robust, would they break if some events like keyboards input come at unexpected times? (trying to jump while in crouch, etc).
 
 Optionally:
 - Try implementing a PA that drives events to the DFA, to make a NPC from the character.
