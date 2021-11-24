@@ -8,7 +8,7 @@ Lectures:
 - [Singleton and Dependency Injection](01_singleton_and_di.html)
 - [Composition, Composite, Components](02_components.html)
 - [State and state machine](03_state.html)
-- Observer pattern, Stale state, Single source of truth
+- [Observer pattern, Stale state, Single source of truth](04_observer.html)
 - RAII
 - Facade, Adapter, Bridge, Proxy, Decorator
 - Memento, Visitor
