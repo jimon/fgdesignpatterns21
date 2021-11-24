@@ -98,7 +98,7 @@ Dmytro Ivanov
 <h1>State pattern</h1>
 <p>State pattern as described in “Design Patterns: Elements of Reusable Object-Oriented Software” book (1994).</p>
 <p>Inactive-&gt;Connecting-&gt;Connected.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode numberSource csharp number-lines"><code class="sourceCode cs"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw">internal</span> <span class="kw">abstract</span> <span class="kw">class</span> NetworkConnectionState <span class="op">{</span></span>
+<div class="sourceCode" id="cb1"><pre class="sourceCode numberSource csharp number-lines"><code class="sourceCode cs"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw">internal</span> <span class="kw">class</span> NetworkConnectionState <span class="op">{</span></span>
 <span id="cb1-2"><a href="#cb1-2"></a>    <span class="kw">public</span> <span class="kw">virtual</span> <span class="dt">void</span> <span class="fu">Connect</span><span class="op">()</span>      <span class="op">{</span><span class="co">/* no-op */</span><span class="op">}</span></span>
 <span id="cb1-3"><a href="#cb1-3"></a>    <span class="kw">public</span> <span class="kw">virtual</span> <span class="dt">void</span> <span class="fu">Disconnect</span><span class="op">()</span>   <span class="op">{</span><span class="co">/* no-op */</span><span class="op">}</span></span>
 <span id="cb1-4"><a href="#cb1-4"></a>    <span class="kw">public</span> <span class="kw">virtual</span> <span class="dt">void</span> <span class="fu">Send</span><span class="op">(</span><span class="dt">int</span> data<span class="op">)</span> <span class="op">{</span><span class="co">/* no-op */</span><span class="op">}</span></span>
@@ -123,7 +123,7 @@ Dmytro Ivanov
 </div>
 <div id="state-pattern-2" class="slide section level2">
 <h1>State pattern</h1>
-<div class="sourceCode" id="cb2"><pre class="sourceCode numberSource csharp number-lines"><code class="sourceCode cs"><span id="cb2-1"><a href="#cb2-1"></a><span class="kw">class</span> NetworkConnectionInactiveState <span class="op">:</span> NetworkConnectionState <span class="op">{</span></span>
+<div class="sourceCode" id="cb2"><pre class="sourceCode numberSource csharp number-lines"><code class="sourceCode cs"><span id="cb2-1"><a href="#cb2-1"></a><span class="kw">internal</span> <span class="kw">class</span> NetworkConnectionInactiveState <span class="op">:</span> NetworkConnectionState <span class="op">{</span></span>
 <span id="cb2-2"><a href="#cb2-2"></a>    <span class="kw">public</span> <span class="fu">NetworkConnectionInactiveState</span><span class="op">(</span>NetworkConnection setConnection<span class="op">)</span> <span class="op">{</span></span>
 <span id="cb2-3"><a href="#cb2-3"></a>        connection <span class="op">=</span> setConnection<span class="op">;</span></span>
 <span id="cb2-4"><a href="#cb2-4"></a>    <span class="op">}</span></span>
@@ -133,7 +133,7 @@ Dmytro Ivanov
 <span id="cb2-8"><a href="#cb2-8"></a>    <span class="op">}</span></span>
 <span id="cb2-9"><a href="#cb2-9"></a><span class="op">}</span></span>
 <span id="cb2-10"><a href="#cb2-10"></a></span>
-<span id="cb2-11"><a href="#cb2-11"></a><span class="kw">class</span> NetworkConnectionConnectingState <span class="op">:</span> NetworkConnectionState <span class="op">{</span></span>
+<span id="cb2-11"><a href="#cb2-11"></a><span class="kw">internal</span> <span class="kw">class</span> NetworkConnectionConnectingState <span class="op">:</span> NetworkConnectionState <span class="op">{</span></span>
 <span id="cb2-12"><a href="#cb2-12"></a>    <span class="kw">public</span> <span class="fu">NetworkConnectionConnectingState</span><span class="op">(</span>NetworkConnection setConnection<span class="op">)</span> <span class="op">{</span></span>
 <span id="cb2-13"><a href="#cb2-13"></a>        connection <span class="op">=</span> setConnection<span class="op">;</span></span>
 <span id="cb2-14"><a href="#cb2-14"></a>    <span class="op">}</span></span>
@@ -149,7 +149,7 @@ Dmytro Ivanov
 <span id="cb2-24"><a href="#cb2-24"></a>    <span class="op">}</span></span>
 <span id="cb2-25"><a href="#cb2-25"></a><span class="op">}</span></span>
 <span id="cb2-26"><a href="#cb2-26"></a></span>
-<span id="cb2-27"><a href="#cb2-27"></a><span class="kw">class</span> NetworkConnectionConnectedState <span class="op">:</span> NetworkConnectionState <span class="op">{</span></span>
+<span id="cb2-27"><a href="#cb2-27"></a><span class="kw">internal</span> <span class="kw">class</span> NetworkConnectionConnectedState <span class="op">:</span> NetworkConnectionState <span class="op">{</span></span>
 <span id="cb2-28"><a href="#cb2-28"></a>    <span class="kw">public</span> <span class="fu">NetworkConnectionConnectedState</span><span class="op">(</span>NetworkConnection setConnection<span class="op">)</span> <span class="op">{</span></span>
 <span id="cb2-29"><a href="#cb2-29"></a>        connection <span class="op">=</span> setConnection<span class="op">;</span></span>
 <span id="cb2-30"><a href="#cb2-30"></a>    <span class="op">}</span></span>

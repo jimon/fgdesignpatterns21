@@ -13,7 +13,7 @@ State pattern as described in "Design Patterns: Elements of Reusable Object-Orie
 Inactive->Connecting->Connected.
 
 ```{.csharp .number-lines}
-internal abstract class NetworkConnectionState {
+internal class NetworkConnectionState {
 	public virtual void Connect()      {/* no-op */}
 	public virtual void Disconnect()   {/* no-op */}
 	public virtual void Send(int data) {/* no-op */}
@@ -40,7 +40,7 @@ public class NetworkConnection {
 ## State pattern
 
 ```{.csharp .number-lines}
-class NetworkConnectionInactiveState : NetworkConnectionState {
+internal class NetworkConnectionInactiveState : NetworkConnectionState {
 	public NetworkConnectionInactiveState(NetworkConnection setConnection) {
 		connection = setConnection;
 	}
@@ -50,7 +50,7 @@ class NetworkConnectionInactiveState : NetworkConnectionState {
 	}
 }
 
-class NetworkConnectionConnectingState : NetworkConnectionState {
+internal class NetworkConnectionConnectingState : NetworkConnectionState {
 	public NetworkConnectionConnectingState(NetworkConnection setConnection) {
 		connection = setConnection;
 	}
@@ -66,7 +66,7 @@ class NetworkConnectionConnectingState : NetworkConnectionState {
 	}
 }
 
-class NetworkConnectionConnectedState : NetworkConnectionState {
+internal class NetworkConnectionConnectedState : NetworkConnectionState {
 	public NetworkConnectionConnectedState(NetworkConnection setConnection) {
 		connection = setConnection;
 	}
