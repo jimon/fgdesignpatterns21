@@ -96,10 +96,10 @@ Dmytro Ivanov
 </div>
 <div id="systems-user-interfaces" class="slide section level2">
 <h1>Systems user interfaces</h1>
-<p>Systems UI historically only render only when something changed, and they only “repaint” parts of the screen that actually changed.</p>
-<p>Games usually render full frame every VSync-ish (lines are a bit blurry when we’re talking about adaptive sync).</p>
-<p>That is why calculator made with Cocoa Touch on iOS barely drains any battery, but a calculator made with Unity will heat your phone, drain battery, etc.</p>
-<p>Systems UI historically had very little notion of “ticks”/“pumps”/“updates”/“rendering”, but instead was taking a more reactive approach:</p>
+<p>Systems UI historically only render when something changed, and they only “repaint” parts of the screen that actually changed.</p>
+<p>Games usually render full frame every VSync-ish (it’s a bit blurry when we’re talking about adaptive sync).</p>
+<p>That is why calculator made with Cocoa Touch on iOS barely drains any battery, but a calculator made with Unity will heat-up your phone, drain battery, etc.</p>
+<p>Systems UI historically had very little notion of “ticks”/“pumps”/“updates”/“rendering”, but instead were taking a more reactive approach:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode numberSource csharp number-lines"><code class="sourceCode cs"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw">class</span> UICheckbox <span class="op">:</span> Widget</span>
 <span id="cb1-2"><a href="#cb1-2"></a><span class="op">{</span></span>
 <span id="cb1-3"><a href="#cb1-3"></a>    <span class="kw">private</span> <span class="dt">bool</span> state<span class="op">;</span></span>
@@ -125,8 +125,8 @@ Dmytro Ivanov
 </div>
 <div id="systems-user-interfaces-1" class="slide section level2">
 <h1>Systems user interfaces</h1>
-<p>How UI get changes and react to them is a highly flourishing part of programming. They literally tried anything and everything: events, message queues, property binding, reactive programming as in MVC, functional reactive programming, actor based, etc.</p>
-<p>In more modern times. As HTML DOM is also stateful, this influenced modern web development industry: React/Angular/Vue/etc are in part solving transition between events and statefulness.</p>
+<p>How UI get changes and react to them is a highly flourishing part of programming. They literally tried anything and everything: events, message queues, property binding, reactive programming (as in MVC, etc), functional reactive programming, actor based, etc.</p>
+<p>In more modern times. As HTML DOM is also stateful, this influenced modern web development industry: React/Angular/Vue/etc are in part solving transition between events and statefulness (virtual DOM diffing is one of the ways there).</p>
 <p>UI in game development also took a different turn, dropping encapsulating widgets all-together. Classic UI is called retained mode UI, while this approach is called immediate UI. IMGUI is one such example of immediate UI:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode numberSource cplusplus number-lines"><code class="sourceCode"><span id="cb2-1"><a href="#cb2-1"></a>void EveryFrame()</span>
 <span id="cb2-2"><a href="#cb2-2"></a>{</span>
@@ -293,7 +293,6 @@ Dmytro Ivanov
 <li>Latency (like input latency) and <a href="https://en.wikipedia.org/wiki/Bufferbloat">Bufferbloat</a>. How many messages can you process at once and still hit your FPS targets?</li>
 <li>Often, only one place in the code can listen to messages, because they are usually popped from the queue and another code will not see them, this requires that specific place in the code to be aware about all the other places that might be interested in the messages, and notify them somehow. This creates a classic “everything knows about everything” problem of tight coupling between systems.</li>
 </ul>
-<p>(Remark regarding TCP congestion control/UDP).</p>
 </div>
 <div id="push-model-event-driven-code" class="slide section level2">
 <h1>Push model / Event driven code</h1>
@@ -512,14 +511,15 @@ Dmytro Ivanov
 <li><a href="https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller">Wiki: Model–View-Controller</a></li>
 </ul>
 <p>Exercise:</p>
-<pre><code>Implement a player profile with health and UI to show it (text label, heart sprites, etc):
+<pre><code>Implement a player profile with health and UI manager to show it via text label, heart sprites, etc:
 
 - Use observer pattern on player health to update UI state.
 - Try out C# &#39;event&#39; and &#39;delegate&#39;.
 
 Optionally:
 - Try passing both old and new health value, show &quot;game end&quot; if value goes to 0.
-- Try &quot;poll&quot; current health value from UI at a start of the game and once in a while.</code></pre>
+- Try &quot;poll&quot; current health value from UI at a start of the game and once in a while.
+- Try changing health from callback and see what happens.</code></pre>
 </div>
 </body>
 </html>

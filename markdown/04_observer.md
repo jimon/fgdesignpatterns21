@@ -8,13 +8,13 @@ date: Nov, 2021
 
 ## Systems user interfaces
 
-Systems UI historically only render only when something changed, and they only "repaint" parts of the screen that actually changed.
+Systems UI historically only render when something changed, and they only "repaint" parts of the screen that actually changed.
 
-Games usually render full frame every VSync-ish (lines are a bit blurry when we're talking about adaptive sync).
+Games usually render full frame every VSync-ish (it's a bit blurry when we're talking about adaptive sync).
 
-That is why calculator made with Cocoa Touch on iOS barely drains any battery, but a calculator made with Unity will heat your phone, drain battery, etc.
+That is why calculator made with Cocoa Touch on iOS barely drains any battery, but a calculator made with Unity will heat-up your phone, drain battery, etc.
 
-Systems UI historically had very little notion of "ticks"/"pumps"/"updates"/"rendering", but instead was taking a more reactive approach:
+Systems UI historically had very little notion of "ticks"/"pumps"/"updates"/"rendering", but instead were taking a more reactive approach:
 
 ```{.csharp .number-lines}
 class UICheckbox : Widget
@@ -43,9 +43,9 @@ class UICheckbox : Widget
 
 ## Systems user interfaces
 
-How UI get changes and react to them is a highly flourishing part of programming. They literally tried anything and everything: events, message queues, property binding, reactive programming as in MVC, functional reactive programming, actor based, etc.
+How UI get changes and react to them is a highly flourishing part of programming. They literally tried anything and everything: events, message queues, property binding, reactive programming (as in MVC, etc), functional reactive programming, actor based, etc.
 
-In more modern times. As HTML DOM is also stateful, this influenced modern web development industry: React/Angular/Vue/etc are in part solving transition between events and statefulness.
+In more modern times. As HTML DOM is also stateful, this influenced modern web development industry: React/Angular/Vue/etc are in part solving transition between events and statefulness (virtual DOM diffing is one of the ways there).
 
 UI in game development also took a different turn, dropping encapsulating widgets all-together. Classic UI is called retained mode UI, while this approach is called immediate UI. IMGUI is one such example of immediate UI:
 
@@ -222,8 +222,6 @@ Example [Input.GetAccelerationEvent](https://docs.unity3d.com/2021.2/Documentati
 
 - Latency (like input latency) and [Bufferbloat](https://en.wikipedia.org/wiki/Bufferbloat). How many messages can you process at once and still hit your FPS targets?
 - Often, only one place in the code can listen to messages, because they are usually popped from the queue and another code will not see them, this requires that specific place in the code to be aware about all the other places that might be interested in the messages, and notify them somehow. This creates a classic "everything knows about everything" problem of tight coupling between systems.
-
-(Remark regarding TCP congestion control/UDP).
 
 ## Push model / Event driven code
 
@@ -499,7 +497,7 @@ Optionally:
 
 Exercise:
 ```
-Implement a player profile with health and UI to show it (text label, heart sprites, etc):
+Implement a player profile with health and UI manager to show it via text label, heart sprites, etc:
 
 - Use observer pattern on player health to update UI state.
 - Try out C# 'event' and 'delegate'.
@@ -507,4 +505,5 @@ Implement a player profile with health and UI to show it (text label, heart spri
 Optionally:
 - Try passing both old and new health value, show "game end" if value goes to 0.
 - Try "poll" current health value from UI at a start of the game and once in a while.
+- Try changing health from callback and see what happens.
 ```
