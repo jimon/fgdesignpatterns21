@@ -610,7 +610,7 @@ Exercise:
 ```
 Implement a character class with states forming a DFA. Where nodes are character states like standing, walking, jumping, crouch, attack, etc and events are keyboard inputs, animation endings, etc.
 
-- Model the state graph on paper (optionally, try graphviz online).
+- Model the state graph on paper (optionally, try graphviz online or any other graph editor with autolayout).
 - Implement DFA as nested switch-cases.
 - Implement DFA as LUT.
 
