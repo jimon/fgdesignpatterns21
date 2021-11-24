@@ -379,6 +379,8 @@ for(var y = 0; y < 30; ++y)
 	DoNothing();
 ```
 
+This technique is called [bit banging](https://en.wikipedia.org/wiki/Bit_banging).
+
 (from [https://www.wired.com/2009/03/racing-the-beam/](https://www.wired.com/2009/03/racing-the-beam/))
 
 ## Before modern times
