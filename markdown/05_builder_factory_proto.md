@@ -85,46 +85,84 @@ class GameStoreAndPotionManager
 
 ## Create config static fields or struct
 
+::: columns
+:::: column
+
+Move config to statics with-in the class:
+
 ```{.csharp .number-lines}
-
-interface IPotion { ... }
-
-class HealthPotion : IPotion {
-	// or make separate HealthPotionConfig
+public class HealthPotion ... {
 	// not cool that it's not-readonly here
 	public static int HowMuchHealthToAddWhenUsed;
 
 	public readonly int Level;
 
-	public HealthPotion(int level)
-	{
+	public HealthPotion(int level) {
 		Level = level;
 	}
 
-	public void Apply()
-	{
+	public void Apply() {
 		Player.Instance.Health += HowMuchHealthToAddWhenUsed * Level;
 	}
 }
 
-class GameStoreAndPotionManager
-{
-	public IPotion BuyPotion(PotionType type, int level)
-	{
-		switch (type)
-		{
+public class GameStoreAndPotionManager {
+	public IPotion BuyPotion(PotionType type, int level) {
+		switch (type) {
 			case PotionType.Health:
 				return new HealthPotion(level);
 			...
 		}
 	}
 
-	public void LoadConfig()
-	{
+	public void LoadConfig() {
 		HealthPotion.HowMuchHealthToAddWhenUsed = ...;
 	}
 }
 ```
+
+::::
+:::: column
+
+Or move it out to a separate object:
+
+```{.csharp .number-lines}
+struct HealthPotionsConfig {
+	public readonly int HowMuchHealthToAddWhenUsed;
+
+	public HealthPotionsConfig(...) { ... }
+}
+
+public struct HealthPotion ... {
+	public readonly int Level;
+
+	public HealthPotion(int level) {
+		Level = level;
+	}
+
+	public void Apply() {
+		Player.Instance.Health +=
+			GameStoreAndPotionManager
+				.HealthPotionsConfig
+				.HowMuchHealthToAddWhenUsed * Level;
+	}
+}
+
+public class GameStoreAndPotionManager {
+	public IPotion BuyPotion(PotionType type, int level) {
+		...
+	}
+
+	public static HealthPotionsConfig HealthPotionsConfig { get; private set; }
+
+	public void LoadConfig() {
+		HealthPotionsConfig = new HealthPotionsConfig(...);
+	}
+}
+```
+
+::::
+:::
 
 ## Types? Where we’re going, we don’t need types.
 
@@ -132,38 +170,32 @@ class GameStoreAndPotionManager
 :::: column
 
 ```{.csharp .number-lines}
-enum PotionType
-{
+enum PotionType {
 	Invalid,
 	Health,
 	Mana
 }
 
 // Sum type / Tagged union
-struct Potion
-{
+struct Potion {
+
 	public readonly PotionType PotionType;
+
+	public Potion(PotionType potionType) { ... }
+
 	...
 
-	public static void Apply(...)
-	{
-		switch(PotionType)
-		{
+	public static void Apply(...) {
+		switch(PotionType) {
 		case PotionType.Health: ...; break;
 		case PotionType.Mana:   ...; break;
 		}
 	}
 }
 
-struct GameStoreAndPotionManager
-{
-	public static Potion BuyPotion(PotionType type)
-	{
-		return new Potion
-		{
-			PotionType = type,
-			...
-		};
+struct GameStoreAndPotionManager {
+	public static Potion BuyPotion(PotionType type) {
+		return new Potion(type, ...);
 	}
 }
 ```
@@ -202,7 +234,7 @@ Useful when construction of an object is bulky/unwieldy, e.g. tons of dependency
 
 ## Factory Method
 
-Factory method, also called virtual constructor is an act of decoupling interface and implementation of a creational method:
+Factory method, also called virtual constructor, is an act of decoupling interface and implementation of a creational method:
 
 ```{.csharp .number-lines}
 class IItem ... { ... }
@@ -642,7 +674,7 @@ public class Potion {
 	public int Level;
 
 	public Potion Clone() {
-		// Note, if Potion is struct than MemberwiseClone will be a boxing allocation
+		// Note, if Potion is struct than MemberwiseClone will do a boxing allocation
 		return (Potion)MemberwiseClone();
 	}
 }
@@ -764,12 +796,13 @@ Optionally:
 - [Wiki: Abstract Factory](https://en.wikipedia.org/wiki/Abstract_factory_pattern)
 - [Wiki: Builder](https://en.wikipedia.org/wiki/Builder_pattern)
 - [Wiki: Prototype](https://en.wikipedia.org/wiki/Prototype_pattern)
+- [Wiki: Method chaining](https://en.wikipedia.org/wiki/Method_chaining)
 - [Game Programming patterns: Prototype](http://gameprogrammingpatterns.com/prototype.html)
 - "Design Patterns: Elements of Reusable Object-Oriented Software" (1994)
 
 Exercise:
 ```
-Add potions from UI, would be great if do it in pairs/groups:
+Add potions from UI, would be great if you do it in pairs/groups:
 
 - Create a factory that can create potions based on an enum (e.g. public Potion Create(PotionType type) or similar)
 - Implement it via switch-case
