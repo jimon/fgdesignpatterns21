@@ -60,9 +60,9 @@ All lectures will be available later on [Github pages](https://jimon.github.io/f
 
 ### What
 
-Make a game, where features are implement with help of patterns.
+Make a game, where features are implement with help of patterns. Optionally, instead of making full game, implement just some game features with help of patterns, the game features should be functional.
 
-Feature suggestion:
+Feature suggestions:
 
 - Skill tree
 - Inventory
@@ -74,6 +74,8 @@ Feature suggestion:
 - Achievements
 - Interactive storytelling
 - In-game editor
+
+Feel free to get creative though.
 
 Optionally, could be interesting to try to implement it as no-coding-required game systems. Meaning someone with no coding skills could use your crafting system to implement new crafting rules in your game.
 
