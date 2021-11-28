@@ -9,14 +9,14 @@ Lectures:
 - [Composition, Composite, Components](02_components.html)
 - [State and state machine](03_state.html)
 - [Observer pattern, Stale state, Single source of truth](04_observer.html)
-- RAII
-- Facade, Adapter, Bridge, Proxy, Decorator
-- Memento, Visitor
-- Interpreter
+- [Builder, Factory, Prototype](05_builder_factory_proto.html)
+- Memento, Serialization, Visitor
 - Flyweight, Pool
-- Builder, Factory, Prototype
-- Specification
+- Facade, Adapter, Bridge, Proxy, Decorator
+- [SOLID and other principles](e2_solid.html)
 - [Double buffering](e0_double_buffer.html)
 - [Dirty flag](e1_dirty_flag.html)
 - Event queue
-- [SOLID and other principles](e2_solid.html)
+- Specification
+- RAII
+- Interpreter
