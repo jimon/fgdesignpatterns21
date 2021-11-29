@@ -10,12 +10,13 @@ rule pandoc
             -o $out $
             $in
 
-build 00_intro.html:                    pandoc markdown/00_intro.md
-build 01_singleton_and_di.html:         pandoc markdown/01_singleton_and_di.md
-build 02_components.html:               pandoc markdown/02_components.md
-build 03_state.html:                    pandoc markdown/03_state.md
-build 04_observer.html:                 pandoc markdown/04_observer.md
-build 05_builder_factory_proto.html:    pandoc markdown/05_builder_factory_proto.md
-build e0_double_buffer.html:            pandoc markdown/e0_double_buffer.md
-build e1_dirty_flag.html:               pandoc markdown/e1_dirty_flag.md
-build e2_solid.html:                    pandoc markdown/e2_solid.md
+build 00_intro.html:                         pandoc markdown/00_intro.md
+build 01_singleton_and_di.html:              pandoc markdown/01_singleton_and_di.md
+build 02_components.html:                    pandoc markdown/02_components.md
+build 03_state.html:                         pandoc markdown/03_state.md
+build 04_observer.html:                      pandoc markdown/04_observer.md
+build 05_builder_factory_proto.html:         pandoc markdown/05_builder_factory_proto.md
+build 06_memento_visitor_serialization.html: pandoc markdown/06_memento_visitor_serialization.md
+build e0_double_buffer.html:                 pandoc markdown/e0_double_buffer.md
+build e1_dirty_flag.html:                    pandoc markdown/e1_dirty_flag.md
+build e2_solid.html:                         pandoc markdown/e2_solid.md
