@@ -581,7 +581,7 @@ Almost no spikes
 
 Exercise:
 ```
-Implement a particle spawner where:
+In pairs/groups, implement a particle spawner where:
 
 - Particles are GameObjects
 - Instantiated via prefab
