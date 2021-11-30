@@ -11,7 +11,7 @@ Lectures:
 - [Observer pattern, Stale state, Single source of truth](04_observer.html)
 - [Builder, Factory, Prototype](05_builder_factory_proto.html)
 - [Memento, Serialization, Visitor](06_memento_visitor_serialization.html)
-- Flyweight, Pool
+- [Flyweight, Pool](07_flyweight_pool.html)
 - Facade, Adapter, Bridge, Proxy, Decorator
 - [SOLID and other principles](e2_solid.html)
 - [Double buffering](e0_double_buffer.html)
