@@ -630,7 +630,7 @@ Exercise:
 ```
 - Implement a visitor pattern for your item/inventory/shop/etc system of choice.
 - Write to console names of your items/etc from the visitor.
-- Look inside unity .asset/.unity files. Try changing something in the scene (like a color) and see how it changes in the file.
+- Look inside unity .asset/.unity files. Try changing something in the scene (like a color in your own monobehaviour) and see how it changes in the file.
 
 Optionally:
 - Try adding properties to MonoBehavior that Unity wouldn't serialize, like a 2d array.
