@@ -12,7 +12,7 @@ Lectures:
 - [Builder, Factory, Prototype](05_builder_factory_proto.html)
 - [Memento, Serialization, Visitor](06_memento_visitor_serialization.html)
 - [Flyweight, Pool](07_flyweight_pool.html)
-- Facade, Adapter, Bridge, Proxy, Decorator
+- [Facade, Adapter, Bridge, Proxy, Decorator](08_adapter_bridge_proxy.html)
 - [SOLID and other principles](e2_solid.html)
 - [Double buffering](e0_double_buffer.html)
 - [Dirty flag](e1_dirty_flag.html)
