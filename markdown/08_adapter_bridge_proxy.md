@@ -6,6 +6,10 @@ date: Nov, 2021
 
 # Structural patterns
 
+## Preface
+
+This is an experimental way to present this material and might not match exactly other literature in terms of perspective.
+
 ## Structural patterns origins, true story
 
 ![](markdown/08_adapter_bridge_proxy_meme.jpg)
@@ -58,21 +62,21 @@ Used when we need to "adapt" already existing interface to be used via another a
 Also known as "wrapper". Sometimes called "glue code".
 
 ```{.csharp .number-lines}
-// object adapter
-public class AdapterAtoB : IInterfaceA {
-	// Can either be set dynamically,
-	// or created with-in adapter (from constructor, etc).
-	private IInterfaceB adaptee;
-
-	public void CallA() {
-		adaptee.CallB();
-	}
-}
-
 // class adapter
 public class AdapterAtoB : IInterfaceA, IInterfaceB {
 	public void CallA() {
 		CallB();
+	}
+}
+
+// object adapter
+public class AdapterAtoB : IInterfaceA {
+	// Can either be set dynamically,
+	// or created with-in the adapter (from constructor, etc).
+	private IInterfaceB adaptee;
+
+	public void CallA() {
+		adaptee.CallB();
 	}
 }
 ```
@@ -271,6 +275,7 @@ Another perspective: extend behavior via composition.
 
 ```{.csharp .number-lines}
 public class Decorator : IInterface {
+	// Most often reference is set externally
 	private IInterface realObject;
 
 	public void Call() {
@@ -449,22 +454,28 @@ Proxies could be nice as a first step of trying to add something to a legacy cod
 
 ## Bridge
 
-Key idea: Separate the interface from its implementation.
+Key idea: Separate the interface from its implementation. So both can change independently.
 
-Also known as "pointer to implementation" idiom (PIMPL) in C++.
+Also known as "pointer to implementation" idiom (PIMPL) in C++. Can also be seen as adapter that owns both it's interfaces.
 
 ```{.csharp .number-lines}
 public class Bridge {
-	// Notice bridge "owns" the interface that someone else needs to implement
+	// Notice bridge "owns" the bridging interface that someone else needs to implement
 	public interface IBridge {
 		void CallA();
 	}
 
-	// Generally someone else can assign implementation pointer during runtime
+	// Generally someone else can assign implementation pointer during runtime,
+	// Though bridge can also create the instance during construction, etc
 	private IBridge bridge;
 
 	public void CallA() {
 		bridge.CallA();
+	}
+
+	// Bridge itself provides methods, so has an interface of it's own
+	public void CallB() {
+		...
 	}
 }
 ```
@@ -541,6 +552,9 @@ Exercise:
 
 ```
 - If you have a somewhat working game subsystem, check if you have any opportunities to use facade to simplify it's usage.
+  For example if you have a shop, when you buy something you likely need to trigger a sound and maybe spawn particles.
+  So a facade might unify your actual shop logic, audio and particle subsystem.
+
 - Otherwise, try to implement a shim or decorator to write API calls to console via debug messages:
 
 For example if you have a store subsystem like this:
