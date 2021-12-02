@@ -105,20 +105,23 @@ Dmytro Ivanov
 <div id="structural-patterns-form" class="slide section level2">
 <h1>Structural patterns form</h1>
 <p>These structural patterns generally fit into the following example. The only difference between them is intent.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode numberSource csharp number-lines"><code class="sourceCode cs"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw">public</span> <span class="kw">class</span> SomeClass <span class="op">:</span> IOptionalInterfaceA <span class="op">{</span></span>
+<div class="sourceCode" id="cb1"><pre class="sourceCode numberSource csharp number-lines"><code class="sourceCode cs"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw">public</span> <span class="kw">class</span> SomeClass <span class="op">:</span> IOptionalInterfaceA<span class="op">,</span> IOptionalInterfaceB<span class="op">,</span> <span class="op">...</span> <span class="op">{</span></span>
 <span id="cb1-2"><a href="#cb1-2"></a></span>
-<span id="cb1-3"><a href="#cb1-3"></a>    <span class="kw">private</span> IIOptionalInterfaceB optionalInstance<span class="op">;</span></span>
-<span id="cb1-4"><a href="#cb1-4"></a></span>
-<span id="cb1-5"><a href="#cb1-5"></a>    <span class="dt">void</span> <span class="fu">SomeMethod</span><span class="op">()</span> <span class="op">{</span></span>
-<span id="cb1-6"><a href="#cb1-6"></a>        <span class="op">...</span> optional code <span class="op">...</span></span>
+<span id="cb1-3"><a href="#cb1-3"></a>    <span class="co">// Or can be fields/properties instead</span></span>
+<span id="cb1-4"><a href="#cb1-4"></a>    <span class="kw">private</span> IIOptionalInterfaceA optionalInstanceA<span class="op">;</span></span>
+<span id="cb1-5"><a href="#cb1-5"></a>    <span class="kw">private</span> IIOptionalInterfaceB optionalInstanceB<span class="op">;</span></span>
+<span id="cb1-6"><a href="#cb1-6"></a>    <span class="op">...</span></span>
 <span id="cb1-7"><a href="#cb1-7"></a></span>
-<span id="cb1-8"><a href="#cb1-8"></a>        <span class="kw">if</span> <span class="op">(</span>optional condition<span class="op">)</span></span>
-<span id="cb1-9"><a href="#cb1-9"></a>        </span>
-<span id="cb1-10"><a href="#cb1-10"></a>        optionalInstance_or_someSubSystem_or_self<span class="op">.</span><span class="fu">SomeOtherMethod</span><span class="op">();</span></span>
-<span id="cb1-11"><a href="#cb1-11"></a></span>
-<span id="cb1-12"><a href="#cb1-12"></a>        <span class="op">...</span> optional code <span class="op">...</span></span>
-<span id="cb1-13"><a href="#cb1-13"></a>    <span class="op">}</span></span>
-<span id="cb1-14"><a href="#cb1-14"></a><span class="op">}</span></span></code></pre></div>
+<span id="cb1-8"><a href="#cb1-8"></a>    <span class="dt">void</span> <span class="fu">SomeMethod</span><span class="op">()</span> <span class="op">{</span></span>
+<span id="cb1-9"><a href="#cb1-9"></a>        <span class="op">...</span> optional code <span class="op">...</span></span>
+<span id="cb1-10"><a href="#cb1-10"></a></span>
+<span id="cb1-11"><a href="#cb1-11"></a>        <span class="kw">if</span> <span class="op">(</span>optional condition<span class="op">)</span></span>
+<span id="cb1-12"><a href="#cb1-12"></a>        </span>
+<span id="cb1-13"><a href="#cb1-13"></a>        optionalInstance_or_someSubSystem_or_self<span class="op">.</span><span class="fu">SomeOtherMethod</span><span class="op">();</span></span>
+<span id="cb1-14"><a href="#cb1-14"></a></span>
+<span id="cb1-15"><a href="#cb1-15"></a>        <span class="op">...</span> optional code <span class="op">...</span></span>
+<span id="cb1-16"><a href="#cb1-16"></a>    <span class="op">}</span></span>
+<span id="cb1-17"><a href="#cb1-17"></a><span class="op">}</span></span></code></pre></div>
 <p>So literally any code, that based on incoming invocation calls some other code, can be considered one or more of these patterns .. purely by accident.</p>
 </div>
 <div id="five-kata-of-structural-programming" class="slide section level2">

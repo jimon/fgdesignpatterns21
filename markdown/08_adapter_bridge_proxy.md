@@ -19,9 +19,12 @@ This is an experimental way to present this material and might not match exactly
 These structural patterns generally fit into the following example. The only difference between them is intent.
 
 ```{.csharp .number-lines}
-public class SomeClass : IOptionalInterfaceA {
+public class SomeClass : IOptionalInterfaceA, IOptionalInterfaceB, ... {
 
-	private IIOptionalInterfaceB optionalInstance;
+	// Or can be fields/properties instead
+	private IIOptionalInterfaceA optionalInstanceA;
+	private IIOptionalInterfaceB optionalInstanceB;
+	...
 
 	void SomeMethod() {
 		... optional code ...
