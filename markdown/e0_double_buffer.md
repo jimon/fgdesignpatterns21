@@ -72,6 +72,8 @@ static class Game {
 
 ## Lets make a functioning prototype
 
+::: columns
+:::: column
 
 ```{.csharp .number-lines}
 class SystemA {
@@ -100,6 +102,12 @@ class SystemA {
 	}
 }
 
+```
+
+::::
+:::: column
+
+```{.csharp .number-lines}
 class SystemB {
 	private int[] _data;
 	private int _step, _generation;
@@ -140,6 +148,10 @@ static class Game {
 	}
 }
 ```
+
+::::
+:::
+
 
 ## And let's run it
 
@@ -422,5 +434,4 @@ That is also what [flip models](https://docs.microsoft.com/en-us/windows/win32/d
 ## Self study
 
 - What problem double buffer is solving?
-- What are the main properties of a double buffer.
 - [Game Programming Patterns: Double buffer](http://gameprogrammingpatterns.com/double-buffer.html)
