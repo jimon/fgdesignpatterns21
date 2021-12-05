@@ -182,5 +182,6 @@ Is [getting compiled in sharplab](https://sharplab.io/#v2:EYLgxg9gTgpgtADwGwBYA0
 - [Game Programming Patterns: Command](http://gameprogrammingpatterns.com/command.html)
 
 Optional:
-- How C# lambdas capture outside variables?
-- How C# lambdas are implemented? (tip: it's a class)
+
+- How C# lambdas capture outside variables? More info on this in [Microsoft Docs](https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/delegates/)
+- How C# lambdas are implemented? (tip: it's a class) See for yourself in IL/C# decompiler

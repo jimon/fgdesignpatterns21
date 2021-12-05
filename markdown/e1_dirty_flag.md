@@ -502,12 +502,13 @@ float CalculateMomentOfInertia(Ship ship) { ... }
 - What problem does dirty flag solve?
 - What are the pros and cons of lazy evaluation?
 - When dirty flags and lazy evaluation reduce performance? (tip: tight loops over large amount data in simd can't have branches)
-
 - [Game Programming Patterns: Dirty Flag](http://gameprogrammingpatterns.com/dirty-flag.html)
+
+Optionally:
 - [Wiki: Lazy evaluation](https://en.wikipedia.org/wiki/Lazy_evaluation)
 - [Wiki: Eager evaluation](https://en.wikipedia.org/wiki/Evaluation_strategy#Eager_evaluation)
 
-Exercise:
+Optional exercise:
 ```
 A leader and a follower.
 

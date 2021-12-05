@@ -205,5 +205,8 @@ Ring buffer is an excellent way to implement fixed size FIFO.
 
 - What are event queues and why they are used?
 - What are the common data structures used to implement them?
+- [Game Programming Patterns: Event Queue](http://gameprogrammingpatterns.com/event-queue.html)
 
-[Game Programming Patterns: Event Queue](http://gameprogrammingpatterns.com/event-queue.html)
+Optionally:
+
+- Read up and implement ring buffer yourself.
