@@ -22,3 +22,5 @@ build 08_adapter_bridge_proxy.html:          pandoc markdown/08_adapter_bridge_p
 build e0_double_buffer.html:                 pandoc markdown/e0_double_buffer.md
 build e1_dirty_flag.html:                    pandoc markdown/e1_dirty_flag.md
 build e2_solid.html:                         pandoc markdown/e2_solid.md
+build e3_event_queue.html:                   pandoc markdown/e3_event_queue.md
+build e4_command.html:                       pandoc markdown/e4_command.md

@@ -16,8 +16,8 @@ Lectures:
 - [SOLID and other principles](e2_solid.html)
 - [Double buffering](e0_double_buffer.html)
 - [Dirty flag](e1_dirty_flag.html)
-- Event queue
-- Command
+- [Event queue](e3_event_queue.html)
+- [Command](e4_command.html)
 - Specification
 - RAII
 - Interpreter
