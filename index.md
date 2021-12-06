@@ -19,5 +19,5 @@ Lectures:
 - [Event queue](e3_event_queue.html)
 - [Command](e4_command.html)
 - [Specification](e5_specification.html)
-- RAII
+- [RAII](e6_raii.html)
 - Interpreter
