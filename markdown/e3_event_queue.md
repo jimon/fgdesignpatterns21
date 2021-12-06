@@ -25,7 +25,7 @@ In cloud you might see them differ somewhat, e.g. Publish–subscribe pattern.
 
 ## Event queue
 
-```C#
+```{.csharp .number-lines}
 public class Event {
 	...
 }
@@ -60,7 +60,7 @@ public class Example {
 
 We want to start playing some audio but callback is called on a thread.
 
-```C#
+```{.csharp .number-lines}
 public class MyApp {
 	private Queue<MyEvent> EventQueue;
 
@@ -91,7 +91,7 @@ public class MyApp {
 
 ## Input event queue
 
-```C#
+```{.csharp .number-lines}
 public enum EventType {
 	KeyDown,
 	KeyUp,

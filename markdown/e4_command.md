@@ -8,7 +8,7 @@ date: Nov, 2021
 
 ## Command pattern is
 
-```C#
+```{.csharp .number-lines}
 public interface ICommand
 {
 	void Execute();
@@ -42,7 +42,7 @@ Most common use case in game development is undo/redo system in editors:
 ::: columns
 :::: column
 
-```C#
+```{.csharp .number-lines}
 public interface IUndoRedoCommand
 {
 	void Perform();
@@ -70,7 +70,7 @@ public class MoveGameObject : IUndoRedoCommand
 ::::
 :::: column
 
-```C#
+```{.csharp .number-lines}
 public class UndoRedoSystem
 {
 	private Stack<IUndoRedoCommand> _undoStack = new();
@@ -145,7 +145,7 @@ In command pattern, "Invoker" then would be a higher-order function.
 
 Let's see how this:
 
-```C#
+```{.csharp .number-lines}
 public class Foo {
 	delegate int AddOneDelegate(int number);
 
@@ -172,6 +172,7 @@ Is [getting compiled in sharplab](https://sharplab.io/#v2:EYLgxg9gTgpgtADwGwBYA0
 
 - Might have some use in game logic, for example around generating commands in one place and executing them in another place "in the right time".
 - If your command in command pattern has only one method, consider using delegates instead. In C++ that would be "fast delegates".
+- Though having it as a command interface might allow for easier refactoring, as you can then easily see all usages of a type.
 - Undo/Redo often is implemented via command patterns, but command doesn't necessarily have to have a "undo" method.
 
 # Self study

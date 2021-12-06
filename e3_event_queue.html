@@ -111,106 +111,106 @@ Dmytro Ivanov
 </div>
 <div id="event-queue" class="slide section level2">
 <h1>Event queue</h1>
-<div class="sourceCode" id="cb1"><pre class="sourceCode c#"><code class="sourceCode cs"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> Event <span class="op">{</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="op">...</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> Example <span class="op">{</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> Queue<span class="op">&lt;</span>Event<span class="op">&gt;</span> EventQueue<span class="op">;</span> <span class="co">// First-In-First-Out data structure (FIFO)</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Event Producer, could be more than one, could be multiple threads</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">SomethingHappenedCallback</span><span class="op">(...)</span> <span class="op">{</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>        <span class="dt">var</span> newEvent <span class="op">=</span> <span class="kw">new</span> Event <span class="op">{</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>            <span class="op">...</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>        <span class="op">};</span></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Could grow event queue infinitely, or start dropping old events if we have too many already.</span></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>        EventQueue<span class="op">.</span><span class="fu">Enqueue</span><span class="op">(</span>newEvent<span class="op">);</span></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Event Consumer, could be more than one, could be multiple threads</span></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">OnUpdate</span><span class="op">()</span> <span class="op">{</span></span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Could process all events at once, or limit about events per frame</span></span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>        <span class="kw">while</span> <span class="op">(</span>EventQueue<span class="op">.</span><span class="fu">TryDequeue</span><span class="op">(</span><span class="kw">out</span> <span class="dt">var</span> currentEvent<span class="op">))</span> <span class="op">{</span></span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>            <span class="op">...</span> process <span class="kw">event</span> <span class="op">...</span></span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>            <span class="co">// We could also generate new events here, need to be able to exit from the loop though.</span></span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode numberSource csharp number-lines"><code class="sourceCode cs"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw">public</span> <span class="kw">class</span> Event <span class="op">{</span></span>
+<span id="cb1-2"><a href="#cb1-2"></a>    <span class="op">...</span></span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="op">}</span></span>
+<span id="cb1-4"><a href="#cb1-4"></a></span>
+<span id="cb1-5"><a href="#cb1-5"></a><span class="kw">public</span> <span class="kw">class</span> Example <span class="op">{</span></span>
+<span id="cb1-6"><a href="#cb1-6"></a>    <span class="kw">private</span> Queue<span class="op">&lt;</span>Event<span class="op">&gt;</span> EventQueue<span class="op">;</span> <span class="co">// First-In-First-Out data structure (FIFO)</span></span>
+<span id="cb1-7"><a href="#cb1-7"></a></span>
+<span id="cb1-8"><a href="#cb1-8"></a>    <span class="co">// Event Producer, could be more than one, could be multiple threads</span></span>
+<span id="cb1-9"><a href="#cb1-9"></a>    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">SomethingHappenedCallback</span><span class="op">(...)</span> <span class="op">{</span></span>
+<span id="cb1-10"><a href="#cb1-10"></a>        <span class="dt">var</span> newEvent <span class="op">=</span> <span class="kw">new</span> Event <span class="op">{</span></span>
+<span id="cb1-11"><a href="#cb1-11"></a>            <span class="op">...</span></span>
+<span id="cb1-12"><a href="#cb1-12"></a>        <span class="op">};</span></span>
+<span id="cb1-13"><a href="#cb1-13"></a></span>
+<span id="cb1-14"><a href="#cb1-14"></a>        <span class="co">// Could grow event queue infinitely, or start dropping old events if we have too many already.</span></span>
+<span id="cb1-15"><a href="#cb1-15"></a>        EventQueue<span class="op">.</span><span class="fu">Enqueue</span><span class="op">(</span>newEvent<span class="op">);</span></span>
+<span id="cb1-16"><a href="#cb1-16"></a>    <span class="op">}</span></span>
+<span id="cb1-17"><a href="#cb1-17"></a></span>
+<span id="cb1-18"><a href="#cb1-18"></a>    <span class="co">// Event Consumer, could be more than one, could be multiple threads</span></span>
+<span id="cb1-19"><a href="#cb1-19"></a>    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">OnUpdate</span><span class="op">()</span> <span class="op">{</span></span>
+<span id="cb1-20"><a href="#cb1-20"></a></span>
+<span id="cb1-21"><a href="#cb1-21"></a>        <span class="co">// Could process all events at once, or limit about events per frame</span></span>
+<span id="cb1-22"><a href="#cb1-22"></a>        <span class="kw">while</span> <span class="op">(</span>EventQueue<span class="op">.</span><span class="fu">TryDequeue</span><span class="op">(</span><span class="kw">out</span> <span class="dt">var</span> currentEvent<span class="op">))</span> <span class="op">{</span></span>
+<span id="cb1-23"><a href="#cb1-23"></a>            <span class="op">...</span> process <span class="kw">event</span> <span class="op">...</span></span>
+<span id="cb1-24"><a href="#cb1-24"></a></span>
+<span id="cb1-25"><a href="#cb1-25"></a>            <span class="co">// We could also generate new events here, need to be able to exit from the loop though.</span></span>
+<span id="cb1-26"><a href="#cb1-26"></a>        <span class="op">}</span></span>
+<span id="cb1-27"><a href="#cb1-27"></a>    <span class="op">}</span></span>
+<span id="cb1-28"><a href="#cb1-28"></a><span class="op">}</span></span></code></pre></div>
 </div>
 <div id="more-practical-example" class="slide section level2">
 <h1>More practical example</h1>
 <p>We want to start playing some audio but callback is called on a thread.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode c#"><code class="sourceCode cs"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> MyApp <span class="op">{</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> Queue<span class="op">&lt;</span>MyEvent<span class="op">&gt;</span> EventQueue<span class="op">;</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Called on some random thread</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="dt">void</span> <span class="fu">OnInStorePurchaseComplete</span><span class="op">(...)</span> <span class="op">{</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>        <span class="co">// can&#39;t call Audio.Play(...) here</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>        EventQueue<span class="op">.</span><span class="fu">Enqueue</span><span class="op">(</span><span class="kw">new</span> Event <span class="op">{</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>            Type <span class="op">=</span> EventType<span class="op">.</span><span class="fu">OnInStorePurchaseComplete</span><span class="op">,</span> <span class="co">// some enum</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>            Payload <span class="op">=</span> <span class="op">...</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>        <span class="op">});</span></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Called on main thread</span></span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="dt">void</span> <span class="fu">OnUpdate</span><span class="op">()</span> <span class="op">{</span></span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>        <span class="kw">while</span> <span class="op">(</span>EventQueue<span class="op">.</span><span class="fu">TryDequeue</span><span class="op">(</span><span class="kw">out</span> <span class="dt">var</span> currentEvent<span class="op">))</span> <span class="op">{</span></span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>            <span class="kw">switch</span> <span class="op">(</span>currentEvent<span class="op">.</span><span class="fu">Type</span><span class="op">)</span> <span class="op">{</span></span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>                <span class="kw">case</span> EventType<span class="op">.</span><span class="fu">OnInStorePurchaseComplete</span><span class="op">:</span></span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>                    Audio<span class="op">.</span><span class="fu">Play</span><span class="op">(...);</span></span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>                    <span class="kw">break</span><span class="op">;</span></span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>                <span class="op">...</span></span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span></span>
-<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
-<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode numberSource csharp number-lines"><code class="sourceCode cs"><span id="cb2-1"><a href="#cb2-1"></a><span class="kw">public</span> <span class="kw">class</span> MyApp <span class="op">{</span></span>
+<span id="cb2-2"><a href="#cb2-2"></a>    <span class="kw">private</span> Queue<span class="op">&lt;</span>MyEvent<span class="op">&gt;</span> EventQueue<span class="op">;</span></span>
+<span id="cb2-3"><a href="#cb2-3"></a></span>
+<span id="cb2-4"><a href="#cb2-4"></a>    <span class="co">// Called on some random thread</span></span>
+<span id="cb2-5"><a href="#cb2-5"></a>    <span class="kw">private</span> <span class="dt">void</span> <span class="fu">OnInStorePurchaseComplete</span><span class="op">(...)</span> <span class="op">{</span></span>
+<span id="cb2-6"><a href="#cb2-6"></a>        <span class="co">// can&#39;t call Audio.Play(...) here</span></span>
+<span id="cb2-7"><a href="#cb2-7"></a>        EventQueue<span class="op">.</span><span class="fu">Enqueue</span><span class="op">(</span><span class="kw">new</span> Event <span class="op">{</span></span>
+<span id="cb2-8"><a href="#cb2-8"></a>            Type <span class="op">=</span> EventType<span class="op">.</span><span class="fu">OnInStorePurchaseComplete</span><span class="op">,</span> <span class="co">// some enum</span></span>
+<span id="cb2-9"><a href="#cb2-9"></a>            Payload <span class="op">=</span> <span class="op">...</span></span>
+<span id="cb2-10"><a href="#cb2-10"></a>        <span class="op">});</span></span>
+<span id="cb2-11"><a href="#cb2-11"></a>    <span class="op">}</span></span>
+<span id="cb2-12"><a href="#cb2-12"></a></span>
+<span id="cb2-13"><a href="#cb2-13"></a>    <span class="co">// Called on main thread</span></span>
+<span id="cb2-14"><a href="#cb2-14"></a>    <span class="kw">private</span> <span class="dt">void</span> <span class="fu">OnUpdate</span><span class="op">()</span> <span class="op">{</span></span>
+<span id="cb2-15"><a href="#cb2-15"></a>        <span class="kw">while</span> <span class="op">(</span>EventQueue<span class="op">.</span><span class="fu">TryDequeue</span><span class="op">(</span><span class="kw">out</span> <span class="dt">var</span> currentEvent<span class="op">))</span> <span class="op">{</span></span>
+<span id="cb2-16"><a href="#cb2-16"></a></span>
+<span id="cb2-17"><a href="#cb2-17"></a>            <span class="kw">switch</span> <span class="op">(</span>currentEvent<span class="op">.</span><span class="fu">Type</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb2-18"><a href="#cb2-18"></a>                <span class="kw">case</span> EventType<span class="op">.</span><span class="fu">OnInStorePurchaseComplete</span><span class="op">:</span></span>
+<span id="cb2-19"><a href="#cb2-19"></a>                    Audio<span class="op">.</span><span class="fu">Play</span><span class="op">(...);</span></span>
+<span id="cb2-20"><a href="#cb2-20"></a>                    <span class="kw">break</span><span class="op">;</span></span>
+<span id="cb2-21"><a href="#cb2-21"></a>                <span class="op">...</span></span>
+<span id="cb2-22"><a href="#cb2-22"></a>            <span class="op">}</span></span>
+<span id="cb2-23"><a href="#cb2-23"></a></span>
+<span id="cb2-24"><a href="#cb2-24"></a>        <span class="op">}</span></span>
+<span id="cb2-25"><a href="#cb2-25"></a>    <span class="op">}</span></span>
+<span id="cb2-26"><a href="#cb2-26"></a><span class="op">}</span></span></code></pre></div>
 </div>
 <div id="input-event-queue" class="slide section level2">
 <h1>Input event queue</h1>
-<div class="sourceCode" id="cb3"><pre class="sourceCode c#"><code class="sourceCode cs"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">enum</span> EventType <span class="op">{</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    KeyDown<span class="op">,</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    KeyUp<span class="op">,</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    MouseMove<span class="op">,</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="op">...</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> Event <span class="op">{</span></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> EventType Type<span class="op">;</span></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> KeyCode keyCode<span class="op">;</span></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> Vector2 mousePosition<span class="op">;</span></span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    <span class="op">...</span></span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> MyApp <span class="op">{</span></span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> Queue<span class="op">&lt;</span>Event<span class="op">&gt;</span> EventQueue<span class="op">;</span></span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    <span class="co">// This could arrive at any point, even during our rendering</span></span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="dt">void</span> <span class="fu">Windows_On_Key_Down</span><span class="op">(</span>KeyCode keyCode<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>        <span class="dt">var</span> newEvent <span class="op">=</span> <span class="kw">new</span> Event <span class="op">{</span></span>
-<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>            Type <span class="op">=</span> EventType<span class="op">.</span><span class="fu">KeyDown</span><span class="op">,</span></span>
-<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>            keyCode <span class="op">=</span> keyCode</span>
-<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>        <span class="op">};</span></span>
-<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>        EventQueue<span class="op">.</span><span class="fu">Enqueue</span><span class="op">(</span>newEvent<span class="op">);</span></span>
-<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="dt">void</span> <span class="fu">Windows_On_Key_Up</span><span class="op">(</span>KeyCode keyCode<span class="op">)</span> <span class="op">{...}</span></span>
-<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="dt">void</span> <span class="fu">Windows_On_Mouse_Move</span><span class="op">(</span>Vector2 newPosition<span class="op">)</span> <span class="op">{...}</span></span>
-<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="dt">void</span> <span class="fu">OnUpdate</span><span class="op">()</span> <span class="op">{</span></span>
-<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>        <span class="kw">while</span> <span class="op">(</span>EventQueue<span class="op">.</span><span class="fu">TryDequeue</span><span class="op">(</span><span class="kw">out</span> <span class="dt">var</span> currentEvent<span class="op">))</span> <span class="op">{</span></span>
-<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>            <span class="kw">switch</span> <span class="op">(</span>currentEvent<span class="op">.</span><span class="fu">Type</span><span class="op">)</span> <span class="op">{</span></span>
-<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>                <span class="kw">case</span> EventType<span class="op">.</span><span class="fu">KeyDown</span><span class="op">:</span> <span class="op">...;</span> <span class="kw">break</span><span class="op">;</span></span>
-<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>                <span class="op">...</span></span>
-<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span></span>
-<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
-<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode numberSource csharp number-lines"><code class="sourceCode cs"><span id="cb3-1"><a href="#cb3-1"></a><span class="kw">public</span> <span class="kw">enum</span> EventType <span class="op">{</span></span>
+<span id="cb3-2"><a href="#cb3-2"></a>    KeyDown<span class="op">,</span></span>
+<span id="cb3-3"><a href="#cb3-3"></a>    KeyUp<span class="op">,</span></span>
+<span id="cb3-4"><a href="#cb3-4"></a>    MouseMove<span class="op">,</span></span>
+<span id="cb3-5"><a href="#cb3-5"></a>    <span class="op">...</span></span>
+<span id="cb3-6"><a href="#cb3-6"></a><span class="op">}</span></span>
+<span id="cb3-7"><a href="#cb3-7"></a></span>
+<span id="cb3-8"><a href="#cb3-8"></a><span class="kw">public</span> <span class="kw">class</span> Event <span class="op">{</span></span>
+<span id="cb3-9"><a href="#cb3-9"></a>    <span class="kw">public</span> EventType Type<span class="op">;</span></span>
+<span id="cb3-10"><a href="#cb3-10"></a>    <span class="kw">public</span> KeyCode keyCode<span class="op">;</span></span>
+<span id="cb3-11"><a href="#cb3-11"></a>    <span class="kw">public</span> Vector2 mousePosition<span class="op">;</span></span>
+<span id="cb3-12"><a href="#cb3-12"></a>    <span class="op">...</span></span>
+<span id="cb3-13"><a href="#cb3-13"></a><span class="op">}</span></span>
+<span id="cb3-14"><a href="#cb3-14"></a></span>
+<span id="cb3-15"><a href="#cb3-15"></a><span class="kw">public</span> <span class="kw">class</span> MyApp <span class="op">{</span></span>
+<span id="cb3-16"><a href="#cb3-16"></a>    <span class="kw">private</span> Queue<span class="op">&lt;</span>Event<span class="op">&gt;</span> EventQueue<span class="op">;</span></span>
+<span id="cb3-17"><a href="#cb3-17"></a></span>
+<span id="cb3-18"><a href="#cb3-18"></a>    <span class="co">// This could arrive at any point, even during our rendering</span></span>
+<span id="cb3-19"><a href="#cb3-19"></a>    <span class="kw">private</span> <span class="dt">void</span> <span class="fu">Windows_On_Key_Down</span><span class="op">(</span>KeyCode keyCode<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb3-20"><a href="#cb3-20"></a>        <span class="dt">var</span> newEvent <span class="op">=</span> <span class="kw">new</span> Event <span class="op">{</span></span>
+<span id="cb3-21"><a href="#cb3-21"></a>            Type <span class="op">=</span> EventType<span class="op">.</span><span class="fu">KeyDown</span><span class="op">,</span></span>
+<span id="cb3-22"><a href="#cb3-22"></a>            keyCode <span class="op">=</span> keyCode</span>
+<span id="cb3-23"><a href="#cb3-23"></a>        <span class="op">};</span></span>
+<span id="cb3-24"><a href="#cb3-24"></a>        EventQueue<span class="op">.</span><span class="fu">Enqueue</span><span class="op">(</span>newEvent<span class="op">);</span></span>
+<span id="cb3-25"><a href="#cb3-25"></a>    <span class="op">}</span></span>
+<span id="cb3-26"><a href="#cb3-26"></a></span>
+<span id="cb3-27"><a href="#cb3-27"></a>    <span class="kw">private</span> <span class="dt">void</span> <span class="fu">Windows_On_Key_Up</span><span class="op">(</span>KeyCode keyCode<span class="op">)</span> <span class="op">{...}</span></span>
+<span id="cb3-28"><a href="#cb3-28"></a></span>
+<span id="cb3-29"><a href="#cb3-29"></a>    <span class="kw">private</span> <span class="dt">void</span> <span class="fu">Windows_On_Mouse_Move</span><span class="op">(</span>Vector2 newPosition<span class="op">)</span> <span class="op">{...}</span></span>
+<span id="cb3-30"><a href="#cb3-30"></a></span>
+<span id="cb3-31"><a href="#cb3-31"></a>    <span class="kw">private</span> <span class="dt">void</span> <span class="fu">OnUpdate</span><span class="op">()</span> <span class="op">{</span></span>
+<span id="cb3-32"><a href="#cb3-32"></a>        <span class="kw">while</span> <span class="op">(</span>EventQueue<span class="op">.</span><span class="fu">TryDequeue</span><span class="op">(</span><span class="kw">out</span> <span class="dt">var</span> currentEvent<span class="op">))</span> <span class="op">{</span></span>
+<span id="cb3-33"><a href="#cb3-33"></a>            <span class="kw">switch</span> <span class="op">(</span>currentEvent<span class="op">.</span><span class="fu">Type</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb3-34"><a href="#cb3-34"></a>                <span class="kw">case</span> EventType<span class="op">.</span><span class="fu">KeyDown</span><span class="op">:</span> <span class="op">...;</span> <span class="kw">break</span><span class="op">;</span></span>
+<span id="cb3-35"><a href="#cb3-35"></a>                <span class="op">...</span></span>
+<span id="cb3-36"><a href="#cb3-36"></a>            <span class="op">}</span></span>
+<span id="cb3-37"><a href="#cb3-37"></a>        <span class="op">}</span></span>
+<span id="cb3-38"><a href="#cb3-38"></a>    <span class="op">}</span></span>
+<span id="cb3-39"><a href="#cb3-39"></a><span class="op">}</span></span></code></pre></div>
 </div>
 <div id="infinite-loops" class="slide section level2">
 <h1>Infinite loops</h1>

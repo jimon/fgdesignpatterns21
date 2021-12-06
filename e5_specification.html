@@ -6,7 +6,7 @@
   <meta http-equiv="Content-Style-Type" content="text/css" />
   <meta name="generator" content="pandoc" />
   <meta name="author" content="Dmytro Ivanov" />
-  <title>Command pattern</title>
+  <title>Specification pattern</title>
   <style type="text/css">
     code{white-space: pre-wrap;}
     span.smallcaps{font-variant: small-caps;}
@@ -84,164 +84,124 @@
 </head>
 <body>
 <div class="slide titlepage">
-  <h1 class="title">Command pattern</h1>
+  <h1 class="title">Specification pattern</h1>
   <p class="author">
 Dmytro Ivanov
   </p>
   <p class="date">Nov, 2021</p>
 </div>
-<div id="straight-into-code" class="title-slide slide section level1">
-<h1>Straight into code</h1>
+<div id="boolean-equation" class="title-slide slide section level1">
+<h1>Boolean equation</h1>
 
 </div>
-<div id="command-pattern-is" class="slide section level2">
-<h1>Command pattern is</h1>
-<div class="sourceCode" id="cb1"><pre class="sourceCode numberSource csharp number-lines"><code class="sourceCode cs"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw">public</span> <span class="kw">interface</span> ICommand</span>
-<span id="cb1-2"><a href="#cb1-2"></a><span class="op">{</span></span>
-<span id="cb1-3"><a href="#cb1-3"></a>    <span class="dt">void</span> <span class="fu">Execute</span><span class="op">();</span></span>
-<span id="cb1-4"><a href="#cb1-4"></a><span class="op">}</span></span>
-<span id="cb1-5"><a href="#cb1-5"></a></span>
-<span id="cb1-6"><a href="#cb1-6"></a><span class="kw">public</span> <span class="kw">class</span> SomeCommand <span class="op">:</span> ICommand</span>
-<span id="cb1-7"><a href="#cb1-7"></a><span class="op">{</span></span>
-<span id="cb1-8"><a href="#cb1-8"></a>    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">Execute</span><span class="op">()</span></span>
-<span id="cb1-9"><a href="#cb1-9"></a>    <span class="op">{</span></span>
-<span id="cb1-10"><a href="#cb1-10"></a>        <span class="op">...</span></span>
-<span id="cb1-11"><a href="#cb1-11"></a>    <span class="op">}</span></span>
-<span id="cb1-12"><a href="#cb1-12"></a><span class="op">}</span></span>
-<span id="cb1-13"><a href="#cb1-13"></a></span>
-<span id="cb1-14"><a href="#cb1-14"></a><span class="kw">public</span> <span class="kw">class</span> Invoker</span>
-<span id="cb1-15"><a href="#cb1-15"></a><span class="op">{</span></span>
-<span id="cb1-16"><a href="#cb1-16"></a>    <span class="kw">private</span> ICommand command<span class="op">;</span></span>
-<span id="cb1-17"><a href="#cb1-17"></a></span>
-<span id="cb1-18"><a href="#cb1-18"></a>    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">DoSomething</span><span class="op">()</span></span>
-<span id="cb1-19"><a href="#cb1-19"></a>    <span class="op">{</span></span>
-<span id="cb1-20"><a href="#cb1-20"></a>        <span class="op">...</span></span>
-<span id="cb1-21"><a href="#cb1-21"></a>        command<span class="op">.</span><span class="fu">Execute</span><span class="op">();</span></span>
-<span id="cb1-22"><a href="#cb1-22"></a>        <span class="op">...</span></span>
-<span id="cb1-23"><a href="#cb1-23"></a>    <span class="op">}</span></span>
-<span id="cb1-24"><a href="#cb1-24"></a><span class="op">}</span></span></code></pre></div>
+<div id="boolean-equation-1" class="slide section level2">
+<h1>Boolean equation</h1>
+<div class="sourceCode" id="cb1"><pre class="sourceCode numberSource csharp number-lines"><code class="sourceCode cs"><span id="cb1-1"><a href="#cb1-1"></a><span class="dt">bool</span> result <span class="op">=</span> <span class="op">(!</span>a<span class="op">)</span> <span class="op">|</span> <span class="op">(</span>b <span class="op">&amp;</span> c<span class="op">)</span> <span class="op">|</span> <span class="op">(</span>d <span class="op">^</span> e<span class="op">)</span> <span class="op">|</span> <span class="op">(</span>f <span class="op">&amp;&amp;</span> g<span class="op">)</span> <span class="op">|</span> <span class="op">(</span>h <span class="op">||</span> i<span class="op">);</span></span></code></pre></div>
+<p>Quick recap:</p>
+<ul>
+<li><code>!</code> is logical negation</li>
+<li><code>~</code> is bitwise negation</li>
+<li><code>&amp;</code> is logical and bitwise AND</li>
+<li><code>|</code> is logical and bitwise OR</li>
+<li><code>^</code> is logical and bitwise eXclusive-OR (XOR)</li>
+<li><code>&amp;&amp;</code> is conditional logical AND</li>
+<li><code>||</code> is conditional logical OR</li>
+<li><code>&lt;&lt;</code> and <code>&gt;&gt;</code> are bitwise shifts</li>
+</ul>
 </div>
-<div id="undoredo" class="slide section level2">
-<h1>Undo/Redo</h1>
-<p>Most common use case in game development is undo/redo system in editors:</p>
+<div id="specification-pattern" class="slide section level2">
+<h1>Specification pattern</h1>
+<p>Extended boolean equation encoded as tree of items via composite pattern:</p>
 <div class="columns">
 <div class="column">
-<div class="sourceCode" id="cb2"><pre class="sourceCode numberSource csharp number-lines"><code class="sourceCode cs"><span id="cb2-1"><a href="#cb2-1"></a><span class="kw">public</span> <span class="kw">interface</span> IUndoRedoCommand</span>
-<span id="cb2-2"><a href="#cb2-2"></a><span class="op">{</span></span>
-<span id="cb2-3"><a href="#cb2-3"></a>    <span class="dt">void</span> <span class="fu">Perform</span><span class="op">();</span></span>
-<span id="cb2-4"><a href="#cb2-4"></a>    <span class="dt">void</span> <span class="fu">Undo</span><span class="op">();</span></span>
-<span id="cb2-5"><a href="#cb2-5"></a><span class="op">}</span></span>
-<span id="cb2-6"><a href="#cb2-6"></a></span>
-<span id="cb2-7"><a href="#cb2-7"></a><span class="kw">public</span> <span class="kw">class</span> MoveGameObject <span class="op">:</span> IUndoRedoCommand</span>
-<span id="cb2-8"><a href="#cb2-8"></a><span class="op">{</span></span>
-<span id="cb2-9"><a href="#cb2-9"></a>    <span class="kw">public</span> GameObject Target<span class="op">;</span></span>
-<span id="cb2-10"><a href="#cb2-10"></a>    <span class="kw">public</span> Vector3 NewPosition<span class="op">;</span></span>
-<span id="cb2-11"><a href="#cb2-11"></a>    <span class="kw">private</span> Vector3 _oldPosition<span class="op">;</span></span>
-<span id="cb2-12"><a href="#cb2-12"></a></span>
-<span id="cb2-13"><a href="#cb2-13"></a>    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">Perform</span><span class="op">()</span></span>
-<span id="cb2-14"><a href="#cb2-14"></a>    <span class="op">{</span></span>
-<span id="cb2-15"><a href="#cb2-15"></a>        _oldPosition <span class="op">=</span> Target<span class="op">.</span><span class="fu">transform</span><span class="op">.</span><span class="fu">position</span><span class="op">;</span></span>
-<span id="cb2-16"><a href="#cb2-16"></a>        Target<span class="op">.</span><span class="fu">transform</span><span class="op">.</span><span class="fu">position</span> <span class="op">=</span> NewPosition<span class="op">;</span></span>
-<span id="cb2-17"><a href="#cb2-17"></a>    <span class="op">}</span></span>
-<span id="cb2-18"><a href="#cb2-18"></a></span>
-<span id="cb2-19"><a href="#cb2-19"></a>    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">Undo</span><span class="op">()</span></span>
-<span id="cb2-20"><a href="#cb2-20"></a>    <span class="op">{</span></span>
-<span id="cb2-21"><a href="#cb2-21"></a>        Target<span class="op">.</span><span class="fu">transform</span><span class="op">.</span><span class="fu">position</span> <span class="op">=</span> _oldPosition<span class="op">;</span></span>
-<span id="cb2-22"><a href="#cb2-22"></a>    <span class="op">}</span></span>
-<span id="cb2-23"><a href="#cb2-23"></a><span class="op">}</span></span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode numberSource csharp number-lines"><code class="sourceCode cs"><span id="cb2-1"><a href="#cb2-1"></a><span class="kw">public</span> <span class="kw">interface</span> ISpecification <span class="op">{</span></span>
+<span id="cb2-2"><a href="#cb2-2"></a>    <span class="dt">bool</span> <span class="fu">IsSatisfiedBy</span><span class="op">(</span><span class="dt">object</span> candidate<span class="op">);</span></span>
+<span id="cb2-3"><a href="#cb2-3"></a><span class="op">}</span></span>
+<span id="cb2-4"><a href="#cb2-4"></a></span>
+<span id="cb2-5"><a href="#cb2-5"></a><span class="kw">public</span> <span class="kw">class</span> EqualToSpecification <span class="op">:</span> ISpecification <span class="op">{</span></span>
+<span id="cb2-6"><a href="#cb2-6"></a>    <span class="kw">public</span> IComparable Value<span class="op">;</span></span>
+<span id="cb2-7"><a href="#cb2-7"></a></span>
+<span id="cb2-8"><a href="#cb2-8"></a>    <span class="co">// Expression body definitions</span></span>
+<span id="cb2-9"><a href="#cb2-9"></a>    <span class="kw">public</span> <span class="dt">bool</span> <span class="fu">IsSatisfiedBy</span><span class="op">(</span><span class="dt">object</span> candidate<span class="op">)</span> <span class="op">=&gt;</span> Value<span class="op">.</span><span class="fu">CompareTo</span><span class="op">(</span>candidate<span class="op">)</span> <span class="op">==</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb2-10"><a href="#cb2-10"></a><span class="op">}</span></span>
+<span id="cb2-11"><a href="#cb2-11"></a></span>
+<span id="cb2-12"><a href="#cb2-12"></a><span class="kw">public</span> <span class="kw">class</span> AndSpecification <span class="op">:</span> ISpecification <span class="op">{</span></span>
+<span id="cb2-13"><a href="#cb2-13"></a>    <span class="kw">public</span> ISpecification Left<span class="op">;</span></span>
+<span id="cb2-14"><a href="#cb2-14"></a>    <span class="kw">public</span> ISpecification Right<span class="op">;</span></span>
+<span id="cb2-15"><a href="#cb2-15"></a></span>
+<span id="cb2-16"><a href="#cb2-16"></a>    <span class="kw">public</span> <span class="dt">bool</span> <span class="fu">IsSatisfiedBy</span><span class="op">(</span><span class="dt">object</span> candidate<span class="op">)</span> <span class="op">=&gt;</span></span>
+<span id="cb2-17"><a href="#cb2-17"></a>        Left<span class="op">.</span><span class="fu">IsSatisfiedBy</span><span class="op">(</span>candidate<span class="op">)</span> <span class="op">&amp;&amp;</span> Right<span class="op">.</span><span class="fu">IsSatisfiedBy</span><span class="op">(</span>candidate<span class="op">);</span></span>
+<span id="cb2-18"><a href="#cb2-18"></a><span class="op">}</span></span>
+<span id="cb2-19"><a href="#cb2-19"></a></span>
+<span id="cb2-20"><a href="#cb2-20"></a><span class="kw">public</span> <span class="kw">class</span> OrSpecification <span class="op">:</span> ISpecification <span class="op">{</span></span>
+<span id="cb2-21"><a href="#cb2-21"></a>    <span class="kw">public</span> ISpecification Left<span class="op">;</span></span>
+<span id="cb2-22"><a href="#cb2-22"></a>    <span class="kw">public</span> ISpecification Right<span class="op">;</span></span>
+<span id="cb2-23"><a href="#cb2-23"></a></span>
+<span id="cb2-24"><a href="#cb2-24"></a>    <span class="kw">public</span> <span class="dt">bool</span> <span class="fu">IsSatisfiedBy</span><span class="op">(</span><span class="dt">object</span> candidate<span class="op">)</span> <span class="op">=&gt;</span></span>
+<span id="cb2-25"><a href="#cb2-25"></a>        Left<span class="op">.</span><span class="fu">IsSatisfiedBy</span><span class="op">(</span>candidate<span class="op">)</span> <span class="op">||</span> Right<span class="op">.</span><span class="fu">IsSatisfiedBy</span><span class="op">(</span>candidate<span class="op">);</span></span>
+<span id="cb2-26"><a href="#cb2-26"></a><span class="op">}</span></span>
+<span id="cb2-27"><a href="#cb2-27"></a></span>
+<span id="cb2-28"><a href="#cb2-28"></a><span class="kw">public</span> <span class="kw">class</span> NotSpecification <span class="op">:</span> ISpecification <span class="op">{</span></span>
+<span id="cb2-29"><a href="#cb2-29"></a>    <span class="kw">public</span> ISpecification Other<span class="op">;</span></span>
+<span id="cb2-30"><a href="#cb2-30"></a></span>
+<span id="cb2-31"><a href="#cb2-31"></a>    <span class="kw">public</span> <span class="dt">bool</span> <span class="fu">IsSatisfiedBy</span><span class="op">(</span><span class="dt">object</span> candidate<span class="op">)</span> <span class="op">=&gt;</span></span>
+<span id="cb2-32"><a href="#cb2-32"></a>        <span class="op">!</span>Other<span class="op">.</span><span class="fu">IsSatisfiedBy</span><span class="op">(</span>candidate<span class="op">);</span></span>
+<span id="cb2-33"><a href="#cb2-33"></a><span class="op">}</span></span></code></pre></div>
 </div><div class="column">
-<div class="sourceCode" id="cb3"><pre class="sourceCode numberSource csharp number-lines"><code class="sourceCode cs"><span id="cb3-1"><a href="#cb3-1"></a><span class="kw">public</span> <span class="kw">class</span> UndoRedoSystem</span>
-<span id="cb3-2"><a href="#cb3-2"></a><span class="op">{</span></span>
-<span id="cb3-3"><a href="#cb3-3"></a>    <span class="kw">private</span> Stack<span class="op">&lt;</span>IUndoRedoCommand<span class="op">&gt;</span> _undoStack <span class="op">=</span> <span class="kw">new</span><span class="op">();</span></span>
-<span id="cb3-4"><a href="#cb3-4"></a>    <span class="kw">private</span> Stack<span class="op">&lt;</span>IUndoRedoCommand<span class="op">&gt;</span> _redoStack <span class="op">=</span> <span class="kw">new</span><span class="op">();</span></span>
-<span id="cb3-5"><a href="#cb3-5"></a></span>
-<span id="cb3-6"><a href="#cb3-6"></a>    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">Perform</span><span class="op">(</span>IUndoRedoCommand command<span class="op">)</span></span>
-<span id="cb3-7"><a href="#cb3-7"></a>    <span class="op">{</span></span>
-<span id="cb3-8"><a href="#cb3-8"></a>        command<span class="op">.</span><span class="fu">Perform</span><span class="op">();</span></span>
-<span id="cb3-9"><a href="#cb3-9"></a>        _undoStack<span class="op">.</span><span class="fu">Push</span><span class="op">(</span>command<span class="op">);</span></span>
-<span id="cb3-10"><a href="#cb3-10"></a>    <span class="op">}</span></span>
-<span id="cb3-11"><a href="#cb3-11"></a></span>
-<span id="cb3-12"><a href="#cb3-12"></a>    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">Undo</span><span class="op">()</span></span>
-<span id="cb3-13"><a href="#cb3-13"></a>    <span class="op">{</span></span>
-<span id="cb3-14"><a href="#cb3-14"></a>        <span class="kw">if</span> <span class="op">(</span>_undoStack<span class="op">.</span><span class="fu">TryPop</span><span class="op">(</span><span class="kw">out</span> <span class="dt">var</span> command<span class="op">))</span></span>
-<span id="cb3-15"><a href="#cb3-15"></a>        <span class="op">{</span></span>
-<span id="cb3-16"><a href="#cb3-16"></a>            command<span class="op">.</span><span class="fu">Undo</span><span class="op">();</span></span>
-<span id="cb3-17"><a href="#cb3-17"></a>            _redoStack<span class="op">.</span><span class="fu">Push</span><span class="op">(</span>command<span class="op">);</span></span>
-<span id="cb3-18"><a href="#cb3-18"></a>        <span class="op">}</span></span>
-<span id="cb3-19"><a href="#cb3-19"></a>    <span class="op">}</span></span>
-<span id="cb3-20"><a href="#cb3-20"></a></span>
-<span id="cb3-21"><a href="#cb3-21"></a>    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">Redo</span><span class="op">()</span></span>
-<span id="cb3-22"><a href="#cb3-22"></a>    <span class="op">{</span></span>
-<span id="cb3-23"><a href="#cb3-23"></a>        <span class="kw">if</span> <span class="op">(</span>_redoStack<span class="op">.</span><span class="fu">TryPop</span><span class="op">(</span><span class="kw">out</span> <span class="dt">var</span> command<span class="op">))</span></span>
-<span id="cb3-24"><a href="#cb3-24"></a>        <span class="op">{</span></span>
-<span id="cb3-25"><a href="#cb3-25"></a>            command<span class="op">.</span><span class="fu">Perform</span><span class="op">();</span></span>
-<span id="cb3-26"><a href="#cb3-26"></a>            _undoStack<span class="op">.</span><span class="fu">Push</span><span class="op">(</span>command<span class="op">);</span></span>
-<span id="cb3-27"><a href="#cb3-27"></a>        <span class="op">}</span></span>
-<span id="cb3-28"><a href="#cb3-28"></a>    <span class="op">}</span></span>
-<span id="cb3-29"><a href="#cb3-29"></a><span class="op">}</span></span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode numberSource csharp number-lines"><code class="sourceCode cs"><span id="cb3-1"><a href="#cb3-1"></a><span class="dt">var</span> notEqualTwo <span class="op">=</span> <span class="kw">new</span> NotSpecification <span class="op">{</span> <span class="co">// oh geez</span></span>
+<span id="cb3-2"><a href="#cb3-2"></a>    Other <span class="op">=</span> <span class="kw">new</span> EqualToSpecification <span class="op">{</span></span>
+<span id="cb3-3"><a href="#cb3-3"></a>        Value <span class="op">=</span> <span class="dv">2</span></span>
+<span id="cb3-4"><a href="#cb3-4"></a>    <span class="op">}</span></span>
+<span id="cb3-5"><a href="#cb3-5"></a><span class="op">};</span></span>
+<span id="cb3-6"><a href="#cb3-6"></a></span>
+<span id="cb3-7"><a href="#cb3-7"></a><span class="dt">var</span> a <span class="op">=</span> notEqualTwo<span class="op">.</span><span class="fu">IsSatisfiedBy</span><span class="op">(</span><span class="dv">1</span><span class="op">);</span> <span class="co">// True</span></span>
+<span id="cb3-8"><a href="#cb3-8"></a><span class="dt">var</span> b <span class="op">=</span> notEqualTwo<span class="op">.</span><span class="fu">IsSatisfiedBy</span><span class="op">(</span><span class="dv">2</span><span class="op">);</span> <span class="co">// False</span></span></code></pre></div>
 </div>
 </div>
 </div>
-<div id="historical-context" class="slide section level2">
-<h1>Historical context</h1>
-<p>Some language type trivia:</p>
-<ul>
-<li><p>In C/C++ a function pointer is literally 4/8 byte value pointing to location in memory where the function’s code literally is. (Well, actually getting the function pointer is quite a bit more involved, because you might not know where your code will be in memory, so <code>&amp;foo</code> might generate lookup to “Global Offset Table” or alike which will be filled by Dynamic Linker in runtime, Dynamic Linker is the thing that actually loads .exe/ELF/etc files in memory)</p></li>
-<li><p>In C++ method pointer on some compilers is function pointer to the method code + magic adjustment to <code>this</code> ptr. You still need to pass <code>this</code> manually. Like:</p></li>
-</ul>
-<div class="sourceCode" id="cb4"><pre class="sourceCode c++"><code class="sourceCode cpp"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> CallMethodPtr<span class="op">(</span><span class="at">const</span> SomeObject <span class="op">&amp;</span>object <span class="co">/* I am 8 bytes reference to this */</span><span class="op">,</span> <span class="dt">void</span> <span class="op">(</span>SomeObject<span class="op">::*</span>MemberFunction<span class="op">)()</span> <span class="at">const</span> <span class="co">/* I am 16 bytes member pointer on Clang/GCC */</span><span class="op">)</span> <span class="op">{</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="op">(</span>object<span class="op">.*</span>MemberFunction<span class="op">)();</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
-<p>Also during your career you might see something called “C++ fast delegates”, which is an alternative implementation of being able to use method pointers by only using function pointers. This is achieved by creating wrapper functions for every method you get pointer to.</p>
-<ul>
-<li>In C# a delegate is fairly complex data structure that can accommodate method pointer. Delegate type is a class that inherits from <code>System.MulticastDelegate</code>, has plenty of stuff, importantly, can store value of <code>this</code> in the instance of delegate.</li>
-</ul>
+<div id="nunit-example" class="slide section level2">
+<h1>NUnit example</h1>
+<p>If you combine specification pattern with fancy builder pattern you can achieve amazing ergonomics:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode numberSource csharp number-lines"><code class="sourceCode cs"><span id="cb4-1"><a href="#cb4-1"></a>Assert<span class="op">.</span><span class="fu">That</span><span class="op">(...,</span> Is<span class="op">.</span><span class="fu">False</span><span class="op">);</span></span>
+<span id="cb4-2"><a href="#cb4-2"></a>Assert<span class="op">.</span><span class="fu">That</span><span class="op">(...,</span> Is<span class="op">.</span><span class="fu">True</span><span class="op">);</span></span>
+<span id="cb4-3"><a href="#cb4-3"></a>Assert<span class="op">.</span><span class="fu">That</span><span class="op">(...,</span> Is<span class="op">.</span><span class="fu">Null</span><span class="op">);</span></span>
+<span id="cb4-4"><a href="#cb4-4"></a>Assert<span class="op">.</span><span class="fu">That</span><span class="op">(...,</span> Is<span class="op">.</span><span class="fu">Empty</span><span class="op">);</span></span>
+<span id="cb4-5"><a href="#cb4-5"></a>Assert<span class="op">.</span><span class="fu">That</span><span class="op">(...,</span> Is<span class="op">.</span><span class="fu">TypeOf</span><span class="op">&lt;...&gt;());</span></span>
+<span id="cb4-6"><a href="#cb4-6"></a>Assert<span class="op">.</span><span class="fu">That</span><span class="op">(...,</span> Is<span class="op">.</span><span class="fu">EqualTo</span><span class="op">(...));</span></span>
+<span id="cb4-7"><a href="#cb4-7"></a>Assert<span class="op">.</span><span class="fu">That</span><span class="op">(...,</span> Is<span class="op">.</span><span class="fu">EqualTo</span><span class="op">(...).</span><span class="fu">Within</span><span class="op">(...));</span> </span>
+<span id="cb4-8"><a href="#cb4-8"></a>Assert<span class="op">.</span><span class="fu">That</span><span class="op">(...,</span> Is<span class="op">.</span><span class="fu">Not</span><span class="op">.</span><span class="fu">Null</span><span class="op">);</span></span>
+<span id="cb4-9"><a href="#cb4-9"></a>Assert<span class="op">.</span><span class="fu">That</span><span class="op">(...,</span> Is<span class="op">.</span><span class="fu">Not</span><span class="op">.</span><span class="fu">EqualTo</span><span class="op">(...));</span> <span class="co">// </span></span></code></pre></div>
+<p>And most important, it will print human readable messages:</p>
+<pre><code>Expected: ... But was: ...
+Expected: not equal to ... But was: ...
+Expected: 1.0f +/- 0.1f But was: 2.0f Off by: -1.0f</code></pre>
 </div>
-<div id="historical-context-1" class="slide section level2">
-<h1>Historical context</h1>
-<p>Command pattern is from 80-x early 90-x, language landscape was very different back than.</p>
-<p>One way to look at it is a workaround of C++ limitations of not storing <code>this</code> in member pointer.</p>
-<p>Another way to look at it is workaround of C++ limitations of not having higher-order functions transparently accepting method pointers.</p>
-<p>This was later on fixed with <code>std::function</code> and lambdas, but was not really a problem in C# to begin with.</p>
-</div>
-<div id="higher-order-functions" class="slide section level2">
-<h1>Higher-order functions</h1>
-<p>From <a href="https://en.wikipedia.org/wiki/Higher-order_function">Wiki</a>:</p>
+<div id="predicate-function" class="slide section level2">
+<h1>Predicate function</h1>
+<p>From <a href="https://docs.microsoft.com/en-us/dotnet/api/system.predicate-1?view=net-6.0">Microsoft docs</a>:</p>
 <blockquote>
-<p>a higher-order function is a function that does at least one of the following: - takes one or more functions as arguments (i.e. procedural parameters), - returns a function as its result.</p>
+<p>Predicate<T> Delegate Represents the method that defines a set of criteria and determines whether the specified object meets those criteria.</p>
 </blockquote>
-<p>In command pattern, “Invoker” then would be a higher-order function.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode numberSource csharp number-lines"><code class="sourceCode cs"><span id="cb6-1"><a href="#cb6-1"></a><span class="kw">public</span> <span class="kw">delegate</span> <span class="dt">bool</span> Predicate<span class="op">&lt;</span><span class="kw">in</span> T<span class="op">&gt;(</span>T obj<span class="op">);</span></span></code></pre></div>
 </div>
-<div id="c-lambdas" class="slide section level2">
-<h1>C# Lambdas</h1>
-<p>Let’s see how this:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode numberSource csharp number-lines"><code class="sourceCode cs"><span id="cb5-1"><a href="#cb5-1"></a><span class="kw">public</span> <span class="kw">class</span> Foo <span class="op">{</span></span>
-<span id="cb5-2"><a href="#cb5-2"></a>    <span class="kw">delegate</span> <span class="dt">int</span> <span class="fu">AddOneDelegate</span><span class="op">(</span><span class="dt">int</span> number<span class="op">);</span></span>
-<span id="cb5-3"><a href="#cb5-3"></a></span>
-<span id="cb5-4"><a href="#cb5-4"></a>    <span class="kw">static</span> <span class="dt">int</span> <span class="fu">DelegateCaller</span><span class="op">(</span>AddOneDelegate oneDelegate<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb5-5"><a href="#cb5-5"></a>        <span class="kw">return</span> <span class="fu">oneDelegate</span><span class="op">(</span><span class="dv">1</span><span class="op">);</span></span>
-<span id="cb5-6"><a href="#cb5-6"></a>    <span class="op">}</span></span>
-<span id="cb5-7"><a href="#cb5-7"></a></span>
-<span id="cb5-8"><a href="#cb5-8"></a>    <span class="kw">static</span> <span class="dt">int</span> <span class="fu">AddOneAsStaticMethod</span><span class="op">(</span><span class="dt">int</span> x<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb5-9"><a href="#cb5-9"></a>        <span class="kw">return</span> x <span class="op">+</span> <span class="dv">1</span><span class="op">;</span></span>
-<span id="cb5-10"><a href="#cb5-10"></a>    <span class="op">}</span></span>
-<span id="cb5-11"><a href="#cb5-11"></a></span>
-<span id="cb5-12"><a href="#cb5-12"></a>    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">Bar</span><span class="op">()</span> <span class="op">{</span></span>
-<span id="cb5-13"><a href="#cb5-13"></a>        <span class="dt">var</span> a <span class="op">=</span> <span class="dv">1</span><span class="op">;</span></span>
-<span id="cb5-14"><a href="#cb5-14"></a>        <span class="dt">var</span> b <span class="op">=</span> <span class="fu">DelegateCaller</span><span class="op">(</span>AddOneAsStaticMethod<span class="op">);</span></span>
-<span id="cb5-15"><a href="#cb5-15"></a>        <span class="dt">var</span> d <span class="op">=</span> <span class="fu">DelegateCaller</span><span class="op">((</span>x<span class="op">)</span> <span class="op">=&gt;</span> <span class="op">{</span><span class="kw">return</span> x <span class="op">+</span> <span class="dv">1</span><span class="op">;});</span></span>
-<span id="cb5-16"><a href="#cb5-16"></a>        <span class="dt">var</span> e <span class="op">=</span> <span class="fu">DelegateCaller</span><span class="op">((</span>x<span class="op">)</span> <span class="op">=&gt;</span> x <span class="op">+</span> a<span class="op">);</span> <span class="co">// same as (x) =&gt; {return x + foo;}</span></span>
-<span id="cb5-17"><a href="#cb5-17"></a>    <span class="op">}</span></span>
-<span id="cb5-18"><a href="#cb5-18"></a><span class="op">}</span></span></code></pre></div>
-<p>Is <a href="https://sharplab.io/#v2:EYLgxg9gTgpgtADwGwBYA0ATEBqAPgAQCYBGAWACh8BmAAiJoDEIIaBvCmzmjGAGxgDmAQwAuMGgEsAdiJoBBDBgDyUmABE+g0TAAU02VICuAW2AwoASgDcFDl3zEkkmTQ39hYgMJDe/KDoVlVTctMRoIYM0PGAs2CgBILjoAdnDI920dYms7TgBfXJpChyd9eUUVGDkAZwBlEVEJMABZGBEACwgMPRcEWPZyJKT8VIQabBpiG0GuApnOYtp8FBoAISF/fsKkgDcNmiEaAF5J6aGuPagaYGPXKO1vX3MAitUa+saWts6MHPmhy7cW4haKPPw6HR9Y4APjYIxoYwmUzyf3OnEB4hOIIePnBkNiR1hiIO1hoAHoyTRqkJjOIhNUaPiYXDRuMaAAzZhWOZJOZ5IA===">getting compiled in sharplab</a>.</p>
+<div id="predicates-and-lambdas" class="slide section level2">
+<h1>Predicates and lambdas</h1>
+<div class="sourceCode" id="cb7"><pre class="sourceCode numberSource csharp number-lines"><code class="sourceCode cs"><span id="cb7-1"><a href="#cb7-1"></a><span class="kw">delegate</span> <span class="dt">bool</span> <span class="fu">IsSatisfiedBy</span><span class="op">(</span><span class="dt">object</span> obj<span class="op">);</span></span>
+<span id="cb7-2"><a href="#cb7-2"></a><span class="op">...</span></span>
+<span id="cb7-3"><a href="#cb7-3"></a></span>
+<span id="cb7-4"><a href="#cb7-4"></a>IsSatisfiedBy notEqualTwo <span class="op">=</span> <span class="op">(</span>x<span class="op">)</span> <span class="op">=&gt;</span> <span class="op">(</span><span class="dt">int</span><span class="op">)</span>x <span class="op">!=</span> <span class="dv">2</span><span class="op">;</span></span>
+<span id="cb7-5"><a href="#cb7-5"></a></span>
+<span id="cb7-6"><a href="#cb7-6"></a><span class="dt">var</span> a <span class="op">=</span> <span class="fu">notEqualTwo</span><span class="op">(</span><span class="dv">1</span><span class="op">);</span> <span class="co">// False</span></span>
+<span id="cb7-7"><a href="#cb7-7"></a><span class="dt">var</span> b <span class="op">=</span> <span class="fu">notEqualTwo</span><span class="op">(</span><span class="dv">2</span><span class="op">);</span> <span class="co">// True</span></span></code></pre></div>
 </div>
 <div id="final-remarks" class="slide section level2">
 <h1>Final remarks</h1>
 <ul>
-<li>Might have some use in game logic, for example around generating commands in one place and executing them in another place “in the right time”.</li>
-<li>If your command in command pattern has only one method, consider using delegates instead. In C++ that would be “fast delegates”.</li>
-<li>Though having it as a command interface might allow for easier refactoring, as you can then easily see all usages of a type.</li>
-<li>Undo/Redo often is implemented via command patterns, but command doesn’t necessarily have to have a “undo” method.</li>
+<li>In a way, got obsolete by delegates and lambdas.</li>
+<li>Might be somewhat useful if your language doesn’t have generic lambdas (like C#).</li>
+<li>Used a lot in test frameworks to print great readable error messages.</li>
+<li>Often used when you’re trying to build an expression in another domain/library: Abstract Syntax Trees, SAT/SMT solvers, theorem provers, etc.</li>
+<li>Or otherwise doing something “on-the-expression” without using something like Roslyn Source Generators or alike.</li>
 </ul>
 </div>
 
@@ -252,13 +212,8 @@ Dmytro Ivanov
 <div id="self-study-1" class="slide section level2">
 <h1>Self study</h1>
 <ul>
-<li>What are the common use cases for command pattern?</li>
-<li><a href="http://gameprogrammingpatterns.com/command.html">Game Programming Patterns: Command</a></li>
-</ul>
-<p>Optional:</p>
-<ul>
-<li>How C# lambdas capture outside variables? More info on this in <a href="https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/delegates/">Microsoft Docs</a></li>
-<li>How C# lambdas are implemented? (tip: it’s a class) See for yourself in IL/C# decompiler</li>
+<li>Use specification pattern by writing some NUnit tests with assertions (Easiest way to do it in Unity would be to use Unity Test Framework as it’s built on top of NUnit, here is a <a href="https://docs.unity3d.com/Packages/com.unity.test-framework@1.1/manual/getting-started.html">quick how to</a>).</li>
+<li>Look inside how NUnit <code>Is.</code> is implemented (click “Go to definition”).</li>
 </ul>
 </div>
 </body>
