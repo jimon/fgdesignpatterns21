@@ -199,10 +199,10 @@ Dmytro Ivanov
 <p>Our RPN grammar would be:</p>
 <pre><code>Expression ::= ( Number | Add | Sub | Mul | Div ) Expression?
 
-Add ::= &#39;+&#39;
-Sub ::= &#39;-&#39;
-Mul ::= &#39;*&#39;
-Div ::= &#39;/&#39;
+Add    ::= &#39;+&#39;
+Sub    ::= &#39;-&#39;
+Mul    ::= &#39;*&#39;
+Div    ::= &#39;/&#39;
 Number ::= #&#39;[0-9]+&#39;</code></pre>
 <p>Two type of symbols:</p>
 <ul>
@@ -227,7 +227,7 @@ Product    ::= Value   (( &#39;*&#39; | &#39;/&#39;) Product)?
 
 Value      ::= Number | &#39;(&#39; Expression &#39;)&#39;
 
-Number ::= #&#39;[0-9]+&#39;</code></pre>
+Number     ::= #&#39;[0-9]+&#39;</code></pre>
 <p>That’s it! Magic!</p>
 <p>Just 4 lines, and it:</p>
 <ul>

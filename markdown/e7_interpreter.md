@@ -135,10 +135,10 @@ Our RPN grammar would be:
 ```
 Expression ::= ( Number | Add | Sub | Mul | Div ) Expression?
 
-Add ::= '+'
-Sub ::= '-'
-Mul ::= '*'
-Div ::= '/'
+Add    ::= '+'
+Sub    ::= '-'
+Mul    ::= '*'
+Div    ::= '/'
 Number ::= #'[0-9]+'
 ```
 
@@ -166,7 +166,7 @@ Product    ::= Value   (( '*' | '/') Product)?
 
 Value      ::= Number | '(' Expression ')'
 
-Number ::= #'[0-9]+'
+Number     ::= #'[0-9]+'
 ```
 
 That's it! Magic!
