@@ -20,4 +20,4 @@ Lectures:
 - [Command](e4_command.html)
 - [Specification](e5_specification.html)
 - [RAII](e6_raii.html)
-- Interpreter
+- [Interpreter](e7_interpreter.html)

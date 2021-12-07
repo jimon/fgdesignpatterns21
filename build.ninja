@@ -26,3 +26,4 @@ build e3_event_queue.html:                   pandoc markdown/e3_event_queue.md
 build e4_command.html:                       pandoc markdown/e4_command.md
 build e5_specification.html:                 pandoc markdown/e5_specification.md
 build e6_raii.html:                          pandoc markdown/e6_raii.md
+build e7_interpreter.html:                   pandoc markdown/e7_interpreter.md
