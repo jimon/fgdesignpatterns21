@@ -516,7 +516,7 @@ pop two values, add them, push result
 
 Our first compiled program!
 
-## What if were running the instructions?
+## What if we were running the instructions?
 
 ::: columns
 :::: column
