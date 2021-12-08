@@ -27,3 +27,4 @@ build e4_command.html:                       pandoc markdown/e4_command.md
 build e5_specification.html:                 pandoc markdown/e5_specification.md
 build e6_raii.html:                          pandoc markdown/e6_raii.md
 build e7_interpreter.html:                   pandoc markdown/e7_interpreter.md
+build bonus_z3.html:                         pandoc markdown/bonus_z3.md
