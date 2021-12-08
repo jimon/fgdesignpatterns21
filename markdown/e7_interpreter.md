@@ -416,6 +416,8 @@ Let's check if our parser + evaluator is correct:
 
 And that's pretty much what interpreter pattern is.
 
+A more formal name is an abstract syntax tree interpreter.
+
 ::::
 :::
 
@@ -571,6 +573,8 @@ static class StackExtensions {
 	}
 }
 ```
+
+This is a bytecode interpreter.
 
 ::::
 :::
