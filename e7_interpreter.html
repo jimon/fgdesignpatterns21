@@ -586,7 +586,21 @@ pop two values, add them, push result</code></pre>
 <span id="cb17-14"><a href="#cb17-14"></a></span>
 <span id="cb17-15"><a href="#cb17-15"></a>Console<span class="op">.</span><span class="fu">WriteLine</span><span class="op">(</span>result<span class="op">);</span></span></code></pre></div>
 <p>Prints <code>15</code>.</p>
-<p>Congratulations you just made a compiler and a virtual machine!</p>
+<p>Congratulations you just made a compiler and a virtual machine / interpreter!</p>
+</div>
+<div id="the-final-step" class="slide section level2">
+<h1>The final step</h1>
+<p>If instead of our own instructions we generate a real processor instructions, like x64 that most of us have today:</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode numberSource cpp number-lines"><code class="sourceCode cpp"><span id="cb18-1"><a href="#cb18-1"></a><span class="at">const</span> <span class="dt">uint8_t</span> program<span class="op">[]</span> <span class="op">=</span> <span class="op">[</span><span class="bn">0x4c</span><span class="op">,</span> <span class="bn">0x03</span><span class="op">,</span> <span class="bn">0x47</span><span class="op">,</span> <span class="bn">0x0a</span><span class="op">];</span> <span class="co">// add r8,QWORD PTR [rdi+0xa]</span></span>
+<span id="cb18-2"><a href="#cb18-2"></a></span>
+<span id="cb18-3"><a href="#cb18-3"></a>Windows_Mark_This_Memory_Executable<span class="op">(</span>program<span class="op">);</span></span>
+<span id="cb18-4"><a href="#cb18-4"></a></span>
+<span id="cb18-5"><a href="#cb18-5"></a><span class="kw">typedef</span> <span class="dt">void</span> <span class="op">(*</span>MyFunctionPointer<span class="op">)();</span></span>
+<span id="cb18-6"><a href="#cb18-6"></a></span>
+<span id="cb18-7"><a href="#cb18-7"></a>var magicFunction <span class="op">=</span> <span class="op">(</span>MyFunctionPointer<span class="op">)</span>program<span class="op">;</span></span>
+<span id="cb18-8"><a href="#cb18-8"></a></span>
+<span id="cb18-9"><a href="#cb18-9"></a>magicFunction<span class="op">();</span></span></code></pre></div>
+<p>This is Just-In-Time compiler! This is how LuaJit, Chrome V8, etc work.</p>
 </div>
 <div id="final-remarks" class="slide section level2">
 <h1>Final remarks</h1>

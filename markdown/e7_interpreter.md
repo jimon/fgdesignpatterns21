@@ -603,7 +603,25 @@ Console.WriteLine(result);
 
 Prints `15`.
 
-Congratulations you just made a compiler and a virtual machine!
+Congratulations you just made a compiler and a virtual machine / interpreter!
+
+## The final step
+
+If instead of our own instructions we generate a real processor instructions, like x64 that most of us have today:
+
+```{.cpp .number-lines}
+const uint8_t program[] = [0x4c, 0x03, 0x47, 0x0a]; // add r8,QWORD PTR [rdi+0xa]
+
+Windows_Mark_This_Memory_Executable(program);
+
+typedef void (*MyFunctionPointer)();
+
+var magicFunction = (MyFunctionPointer)program;
+
+magicFunction();
+```
+
+This is Just-In-Time compiler! This is how LuaJit, Chrome V8, etc work.
 
 ## Final remarks
 
