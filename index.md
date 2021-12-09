@@ -21,3 +21,4 @@ Lectures:
 - [Specification](e5_specification.html)
 - [RAII](e6_raii.html)
 - [Interpreter](e7_interpreter.html)
+- [Bonus: SMT solver / Theorem Provers](bonus_z3.html)
